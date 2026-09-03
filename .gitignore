@@ -6,3 +6,6 @@ vite.config.js.timestamp-*.mjs
 _build-src.tgz
 _to_delete/
 *.zip
+
+# Figma reference exports — large, and the design file is the source of truth
+design-refs/

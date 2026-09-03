@@ -7,11 +7,11 @@ import "./ServiceCard.css";
  *
  * Follows the card anatomy in Figma 91.04.001 Services Selector (node
  * 412:25375), which numbers six elements:
- *   01 Platform Category — the platform lockup (Parchment Award, Parchment
- *      Pathways, Parchment). Omitted here: unlike the production Services
- *      Selector, which lays every service out in one flat grid and needs the
- *      lockup to tell platforms apart, Admin Connect already groups services
- *      under a heading that names the platform. Pass `lockup` to bring it back.
+ *   01 Platform Category — the platform lockup. Omitted: Admin Connect lists
+ *      every service under one "Parchment Services" heading, because which
+ *      platform a service belongs to isn't useful at the point of choosing
+ *      one, and the Parchment Pathways branding is being retired. The `lockup`
+ *      prop is still there if a platform ever needs calling out.
  *   02 Service Graphic — the scalloped seal, see ServiceGraphic.
  *   03 Service Name.
  *   04 Service Notes — the high-level description.

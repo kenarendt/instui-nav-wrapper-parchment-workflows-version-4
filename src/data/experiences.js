@@ -7,9 +7,11 @@
  * lands on a "Connect" dashboard (a welcome-mat dashboard). Connect modules
  * deep-link into detailed experiences that open in new (simulated) browser tabs.
  *
- * Admin services are grouped, per the design, into:
- *   - Parchment Award Services: Transcript Services, Diploma Services, Dual Enrollment
- *   - Parchment Pathways Services: Receive
+ * Admin services sit in one flat list under a single "Parchment Services"
+ * heading. They used to be split into Parchment Award and Parchment Pathways
+ * groups, but which platform a service belongs to is not something an admin
+ * needs at the point of choosing one, and the Pathways branding is being
+ * retired. One grid also matches the production Services Selector.
  * All admin service dashboards share one common dashboard pattern.
  *
  * Services carry no rollup count for the Connect surface. Aggregating a figure
@@ -34,7 +36,6 @@ export const SERVICES = {
     id: "transcript",
     name: "Transcript Services",
     short: "Transcript",
-    group: "award",
     icon: "file-text",
     description:
       "Manage learners and credentials, and fulfill orders for academic credentials.",
@@ -56,7 +57,6 @@ export const SERVICES = {
     id: "diploma",
     name: "Diploma Services",
     short: "Diploma",
-    group: "award",
     icon: "award",
     description: "Issue digital and printed diplomas.",
     dashboard: {
@@ -76,7 +76,6 @@ export const SERVICES = {
     id: "dualEnrollment",
     name: "Dual Enrollment",
     short: "Dual Enrollment",
-    group: "award",
     icon: "users",
     description:
       "Enroll learners into dual enrollment courses along with comprehensive enrollment management tools.",
@@ -98,7 +97,6 @@ export const SERVICES = {
     id: "receive",
     name: "Receive",
     short: "Receive",
-    group: "pathways",
     icon: "cloud-download",
     description: "Automate receiving academic credentials and documents.",
     dashboard: {
@@ -117,19 +115,12 @@ export const SERVICES = {
   },
 };
 
-export const SERVICE_GROUPS = [
-  {
-    id: "award",
-    name: "Parchment Award Services",
-    brand: "Parchment Award",
-    services: ["transcript", "diploma", "dualEnrollment"],
-  },
-  {
-    id: "pathways",
-    name: "Parchment Pathways Services",
-    brand: "Parchment Pathways",
-    services: ["receive"],
-  },
+/** Admin services in the order they appear on Admin Connect. */
+export const SERVICE_ORDER = [
+  "transcript",
+  "diploma",
+  "dualEnrollment",
+  "receive",
 ];
 
 /**

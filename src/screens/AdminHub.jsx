@@ -6,7 +6,7 @@ import Panel from "../components/blocks/Panel.jsx";
 import ServiceCard from "../components/blocks/ServiceCard.jsx";
 import Button from "../components/Button.jsx";
 import { useBrowser } from "../browser/BrowserContext.jsx";
-import { SERVICE_GROUPS, serviceById, account } from "../data/experiences.js";
+import { SERVICE_ORDER, serviceById, account } from "../data/experiences.js";
 import "./AdminHub.css";
 
 const NAV_ITEMS = [
@@ -40,14 +40,13 @@ export default function AdminHub() {
     launchService(service);
   };
 
-  const main = SERVICE_GROUPS.map((group) => (
-    <Panel key={group.id}>
-      <div className="adminhub__group-head">
-        <h2 className="adminhub__group-title">{group.name}</h2>
-        <span className="adminhub__brand">{group.brand}</span>
-      </div>
+  // One flat grid under a single heading. The Award / Pathways split is gone:
+  // an admin picking a service doesn't need to know which platform it sits on,
+  // and the Pathways branding is being retired.
+  const main = (
+    <Panel title="Parchment Services">
       <div className="adminhub__cards">
-        {group.services.map((id) => {
+        {SERVICE_ORDER.map((id) => {
           const svc = serviceById(id);
           return (
             <ServiceCard key={id} service={svc} onOpen={() => openService(svc)} />
@@ -55,7 +54,7 @@ export default function AdminHub() {
         })}
       </div>
     </Panel>
-  ));
+  );
 
   const trailing = (
     <>

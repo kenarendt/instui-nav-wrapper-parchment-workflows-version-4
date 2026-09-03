@@ -1,33 +1,9 @@
-.adminhub__group-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-  width: 100%;
-}
-
-.adminhub__group-title {
-  margin: 0;
-  font-family: var(--fontfamily-heading);
-  font-weight: var(--fontweight-heading-strong);
-  font-size: 24px;
-  line-height: 1.25;
-  color: var(--heading-basecolor);
-}
-
-.adminhub__brand {
-  font-family: var(--fontfamily-heading);
-  font-weight: var(--fontweight-heading-strong);
-  font-size: var(--fontsize-textbase);
-  color: var(--icon-sidenav-color);
-}
-
 /* Service launch points sit in a responsive grid.
  *
- * auto-fill rather than auto-fit: it keeps empty tracks, so the lone Pathways
- * card stays the width of an Award card instead of stretching across the whole
- * panel. That keeps every card on the page the same size, which is the point
- * of the pattern.
+ * auto-fill rather than auto-fit: it keeps empty tracks, so a short final row
+ * leaves cards at their normal width instead of stretching them across the
+ * panel. Every card on the page stays the same size, which is the point of
+ * the pattern.
  *
  * The Figma reference (91.04.001, notes 07/08) gives the card a 375-500px
  * range on desktop. Admin Connect is narrower than that full-width screen —
@@ -36,6 +12,10 @@
 .adminhub__cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  /* Equal rows: grid sizes each row to its own tallest card, so without this
+     a second row of short descriptions renders visibly stubbier than the
+     first. One height for every card on the page. */
+  grid-auto-rows: 1fr;
   gap: var(--space-lg);
   margin-top: var(--space-lg);
 }
