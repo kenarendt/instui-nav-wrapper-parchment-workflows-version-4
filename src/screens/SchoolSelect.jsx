@@ -1,8 +1,9 @@
-import { ChevronLeft } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, LogOut, UserRound } from "lucide-react";
 import ServiceGraphic from "../components/blocks/ServiceGraphic.jsx";
 import SchoolCard from "../components/blocks/SchoolCard.jsx";
 import { useBrowser } from "../browser/BrowserContext.jsx";
-import { ADMIN_SCHOOLS, serviceById } from "../data/experiences.js";
+import { ADMIN_SCHOOLS, account, serviceById } from "../data/experiences.js";
 import "./SchoolSelect.css";
 
 /**
@@ -13,9 +14,11 @@ import "./SchoolSelect.css";
  * isn't a detour from the page behind it, it's the step that decides what the
  * page will be, and there was nothing underneath worth keeping in view.
  *
- * Unique in the prototype for having no global nav. The only way out is back,
- * because until a school is chosen there is no school context for a nav to
- * describe.
+ * The shell is a slim top bar rather than the global nav, because this is a
+ * gate. Every rail item — Dashboard, Inbox, Settings — is scoped to a school
+ * that hasn't been chosen, so a rail here could only show items that don't
+ * work yet. The bar carries the two things that do apply: a way back, and the
+ * account, so an admin who lands here by accident isn't stuck with one door.
  *
  * Two tiers, following the production page: the admin's usual school on top,
  * the rest under "Related schools". Both actions do the same thing — open the
@@ -23,6 +26,27 @@ import "./SchoolSelect.css";
  */
 export default function SchoolSelect({ serviceId }) {
   const { activeTab, setTabSchool, closeTab } = useBrowser();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const accountRef = useRef(null);
+
+  // Click-away and Escape, so the menu doesn't strand the page in an open
+  // state the user can't dismiss.
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onDown = (e) => {
+      if (!accountRef.current?.contains(e.target)) setMenuOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
   const service = serviceById(serviceId);
   if (!service) return null;
 
@@ -42,14 +66,57 @@ export default function SchoolSelect({ serviceId }) {
     if (activeTab) closeTab(activeTab.id);
   };
 
+  const initials = account.name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2);
+
   return (
     <div className="schoolsel">
-      <nav className="schoolsel__bar" aria-label="Back">
+      <header className="schoolsel__bar">
         <button className="schoolsel__back" onClick={goBack}>
-          <ChevronLeft size={20} strokeWidth={2.5} aria-hidden="true" />
-          Back to my services
+          <span className="schoolsel__back-icon" aria-hidden="true">
+            <ArrowLeft size={18} strokeWidth={2.5} />
+          </span>
+          <span className="schoolsel__back-label">
+            <strong>Back to</strong> my services
+          </span>
         </button>
-      </nav>
+
+        <div className="schoolsel__account" ref={accountRef}>
+          <button
+            className="schoolsel__avatar"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            aria-label={`Account: ${account.name}`}
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            {initials}
+          </button>
+          {menuOpen && (
+            <div className="schoolsel__menu" role="menu">
+              <div className="schoolsel__menu-id">
+                <span className="schoolsel__menu-name">{account.name}</span>
+                <span className="schoolsel__menu-email">{account.email}</span>
+                <span className="schoolsel__menu-role">{account.adminRole}</span>
+              </div>
+              <button className="schoolsel__menu-item" role="menuitem">
+                <UserRound size={18} strokeWidth={2} aria-hidden="true" />
+                Account settings
+              </button>
+              <button
+                className="schoolsel__menu-item"
+                role="menuitem"
+                onClick={() => window.location.reload()}
+              >
+                <LogOut size={18} strokeWidth={2} aria-hidden="true" />
+                Sign out
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
 
       <div className="schoolsel__container">
         <header className="schoolsel__service">
