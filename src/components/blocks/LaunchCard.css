@@ -1,0 +1,117 @@
+/*
+ * Card shell — Figma 91.04.001 Services Selector, node 412:25375.
+ * Reference sizing: desktop min 375 / max 500, tablet 360 / 480,
+ * mobile 320 / 420. The grid that holds the cards sets the track width;
+ * the max here caps it.
+ */
+.launch-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 500px;
+  height: 100%;
+  padding: var(--space-xl) var(--space-lg);
+  text-align: center;
+  background: var(--background-containercolor);
+  border: 1px solid var(--nav-border-color);
+  border-radius: var(--radius-card-sm);
+  transition: box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.launch-card:hover {
+  border-color: #d3d8dd;
+  box-shadow: var(--shadow-elevation1);
+}
+
+/* The recommended choice. Tinted ground rather than colour alone, so the
+   emphasis doesn't rely on hue to read. */
+.launch-card--emphasis {
+  background: #f7f9fc;
+  border-color: #b9d0ee;
+  border-width: 2px;
+  padding: calc(var(--space-xl) - 1px) calc(var(--space-lg) - 1px);
+}
+
+/* 01 Platform Category — off unless a caller passes a lockup. */
+.launch-card__lockup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+}
+
+.launch-card__rule {
+  width: 100%;
+  height: 0;
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--nav-border-color);
+}
+
+/* 03 Name */
+.launch-card__title {
+  margin: 0;
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: var(--fontsize-textlg);
+  line-height: 1.25;
+  color: var(--heading-basecolor);
+}
+
+/* 04 Supporting lines */
+.launch-card__meta {
+  margin: 0;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  line-height: 1.5;
+  color: var(--text-mutedcolor);
+}
+
+/* Tightens the gap between stacked meta lines, which would otherwise inherit
+   the card's larger flex gap and read as unrelated paragraphs. */
+.launch-card__meta + .launch-card__meta {
+  margin-top: calc(var(--space-md) * -1 + 2px);
+}
+
+/* 05 Primary Action — pushed to the bottom so buttons line up across a row of
+   cards whose supporting text runs to different lengths. */
+.launch-card__action {
+  width: 100%;
+  margin-top: auto;
+  padding-top: var(--space-sm);
+}
+
+/* Button defaults to a fixed height and nowrap, which clips a long label in
+   a narrow card. Grow instead: 40px stays the floor. */
+.launch-card__action .btn {
+  width: 100%;
+  height: auto;
+  min-height: var(--button-medium-height);
+  padding: var(--space-sm) var(--button-h-padding);
+  white-space: normal;
+}
+
+/*
+ * Grid that holds a set of launch cards.
+ *
+ * auto-fill rather than auto-fit: it keeps empty tracks, so a short final row
+ * leaves cards at their normal width instead of stretching them across the
+ * container. Every card stays the same size, which is the point of the
+ * pattern. grid-auto-rows: 1fr equalises rows, since grid would otherwise
+ * size each row to its own tallest card and a second row of short text would
+ * render visibly stubbier than the first.
+ */
+.launch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  grid-auto-rows: 1fr;
+  gap: var(--space-lg);
+}
+
+@media (max-width: 700px) {
+  .launch-grid {
+    grid-template-columns: 1fr;
+  }
+}

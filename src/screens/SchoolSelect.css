@@ -1,0 +1,122 @@
+.schoolsel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--background-containercolor);
+}
+
+/* The page's only navigation. A single back control, on its own rule, so it
+   reads as a way out rather than as part of the content. */
+.schoolsel__bar {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: var(--space-md) var(--space-2xl);
+  border-bottom: 1px solid var(--nav-border-color);
+}
+
+.schoolsel__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 40px;
+  padding: 0 var(--space-sm) 0 var(--space-xs);
+  border: none;
+  border-radius: var(--radius-button);
+  background: transparent;
+  font-family: var(--fontfamily-base);
+  font-weight: var(--fontweight-body-strong);
+  font-size: var(--fontsize-textsm);
+  color: var(--text-link-color);
+  cursor: pointer;
+}
+
+.schoolsel__back:hover {
+  background: #eef3fb;
+  text-decoration: underline;
+}
+
+.schoolsel__back:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+.schoolsel__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  width: 100%;
+  max-width: 1200px;
+  padding: var(--space-2xl);
+}
+
+.schoolsel__service {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.schoolsel__service-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.schoolsel__title {
+  margin: 0;
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: var(--fontsize-textxl);
+  line-height: 1.25;
+  color: var(--heading-basecolor);
+}
+
+.schoolsel__sub {
+  margin: 0;
+  font-family: var(--fontfamily-base);
+  font-weight: var(--fontweight-body-strong);
+  font-size: var(--fontsize-textbase);
+  line-height: 1.5;
+  color: var(--text-mutedcolor);
+}
+
+/*
+ * This page carries no nav rail and no trailing column, so it has the room
+ * the Figma reference assumes: 375-500px per card on desktop (notes 07/08).
+ * Admin Connect is narrower and keeps the tighter default in LaunchCard.css.
+ */
+.schoolsel .launch-grid,
+.schoolsel__primary {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+/* The chosen school sits alone but on the same track grid as the related
+   cards, so it comes out the same width rather than spanning the page. */
+.schoolsel__primary {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.schoolsel__related-title {
+  margin: 0 0 var(--space-lg);
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: var(--fontsize-textlg);
+  line-height: 1.25;
+  color: var(--heading-basecolor);
+}
+
+@media (max-width: 700px) {
+  .schoolsel__bar,
+  .schoolsel__container {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+  .schoolsel .launch-grid,
+  .schoolsel__primary {
+    grid-template-columns: 1fr;
+  }
+}

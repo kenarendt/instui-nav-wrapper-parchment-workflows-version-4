@@ -1,0 +1,10 @@
+/* Matches the 64px box the service seal occupies, so a school card and a
+   service card have their title on the same baseline. */
+.schoolcard__crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}

@@ -1,4 +1,5 @@
 import { iconFor } from "./serviceIcons.js";
+import "./ServiceGraphic.css";
 
 /**
  * ServiceGraphic — element 02 "Service Graphic" of the service card

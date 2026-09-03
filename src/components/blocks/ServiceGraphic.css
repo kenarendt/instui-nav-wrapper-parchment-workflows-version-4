@@ -1,0 +1,26 @@
+/*
+ * Service graphic — element 02 of the card anatomy in Figma 91.04.001
+ * Services Selector (node 412:25375). Its own stylesheet because the graphic
+ * also heads the school selection page, outside any card.
+ */
+.service-graphic {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--badge-color-primary);
+}
+
+.service-graphic__seal {
+  display: block;
+}
+
+.service-graphic__glyph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-sidenav-color);
+}

@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { Maximize, Minimize } from "lucide-react";
 import GlobalNav from "./GlobalNav.jsx";
 import IconButton from "./IconButton.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
-import SchoolPickerModal from "./SchoolPickerModal.jsx";
 import { useBrowser } from "../browser/BrowserContext.jsx";
 import {
   ADMIN_SCHOOLS,
@@ -38,9 +36,10 @@ import "./Wrapper.css";
  * page title (Learner Connect does).
  *
  * Pass `schoolScope` (the service name) on an admin service page. When the
- * signed-in admin supports multiple schools, the school is chosen on Admin
- * Connect before the service opens; here it swaps the nav's institution mark
- * for that school's crest and adds "Change schools" to the account menu.
+ * signed-in admin supports multiple schools, the tab shows the school
+ * selection page until one is chosen; here it swaps the nav's institution mark
+ * for that school's crest and adds "Change schools" to the account menu, which
+ * clears the choice and returns the tab to that page.
  */
 // Spell out small counts, per the house style: one through nine as words,
 // 10 and above as numerals.
@@ -84,14 +83,11 @@ export default function Wrapper({
     activeTab,
     setTabSchool,
   } = useBrowser();
-  const [pickerOpen, setPickerOpen] = useState(false);
-
   // A school only comes into play on a service page, and only when this admin
-  // supports more than one school.
+  // supports more than one school. A service tab without one never reaches
+  // this shell — it renders the school selection page instead.
   const schoolScoped = Boolean(schoolScope) && multiSchool;
   const school = schoolScoped ? schoolById(activeTab?.params?.schoolId) : undefined;
-  // No school chosen yet means the dashboard has nothing to show — ask first.
-  const showPicker = schoolScoped && (pickerOpen || !school);
 
   // What the header and nav say about school context.
   let schoolLine = null;
@@ -156,8 +152,11 @@ export default function Wrapper({
         profiles={singleAccount ? [] : PROFILES}
         activeProfileId={activeProfileId}
         onSwitchProfile={singleAccount ? undefined : handleSwitchProfile}
+        // Clearing the school sends this tab back to the selection page.
         onChangeSchool={
-          schoolScoped && school ? () => setPickerOpen(true) : undefined
+          schoolScoped && school && activeTab
+            ? () => setTabSchool(activeTab.id, null)
+            : undefined
         }
         onLogout={handleLogout}
       />
@@ -209,18 +208,6 @@ export default function Wrapper({
           </div>
         </div>
       </main>
-
-      {showPicker && (
-        <SchoolPickerModal
-          serviceName={schoolScope}
-          selectedId={school?.id}
-          onSelect={(picked) => {
-            if (activeTab) setTabSchool(activeTab.id, picked.id);
-            setPickerOpen(false);
-          }}
-          onClose={() => setPickerOpen(false)}
-        />
-      )}
     </div>
   );
 }

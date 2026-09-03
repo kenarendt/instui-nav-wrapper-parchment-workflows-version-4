@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { LayoutDashboard, Sparkles, Inbox, CircleHelp } from "lucide-react";
 import Wrapper from "../components/Wrapper.jsx";
-import SchoolPickerModal from "../components/SchoolPickerModal.jsx";
 import Panel from "../components/blocks/Panel.jsx";
 import ServiceCard from "../components/blocks/ServiceCard.jsx";
 import Button from "../components/Button.jsx";
@@ -17,27 +15,18 @@ const NAV_ITEMS = [
 ];
 
 export default function AdminHub() {
-  const { openTab, multiSchool } = useBrowser();
-  // The service waiting on a school choice, when this admin supports several.
-  const [pendingService, setPendingService] = useState(null);
+  const { openTab } = useBrowser();
 
-  const launchService = (service, schoolId) => {
+  // Opening a service always opens its tab. An admin who works for several
+  // schools lands on the school selection page inside that tab, because the
+  // dashboard has nothing to show until it knows who it is acting for.
+  const openService = (service) => {
     openTab({
       kind: "service",
       title: service.short,
-      params: { serviceId: service.id, ...(schoolId ? { schoolId } : {}) },
+      params: { serviceId: service.id },
       dedupeKey: `service:${service.id}`,
     });
-  };
-
-  // An admin who works for several schools picks one first — the service page
-  // has nothing to show until it knows who it is acting for.
-  const openService = (service) => {
-    if (multiSchool) {
-      setPendingService(service);
-      return;
-    }
-    launchService(service);
   };
 
   // One flat grid under a single heading. The Award / Pathways split is gone:
@@ -45,7 +34,7 @@ export default function AdminHub() {
   // and the Pathways branding is being retired.
   const main = (
     <Panel title="Parchment Services">
-      <div className="adminhub__cards">
+      <div className="launch-grid">
         {SERVICE_ORDER.map((id) => {
           const svc = serviceById(id);
           return (
@@ -113,18 +102,6 @@ export default function AdminHub() {
       trailing={trailing}
     >
       {main}
-
-      {pendingService && (
-        <SchoolPickerModal
-          serviceName={pendingService.name}
-          dismissible
-          onSelect={(picked) => {
-            launchService(pendingService, picked.id);
-            setPendingService(null);
-          }}
-          onClose={() => setPendingService(null)}
-        />
-      )}
     </Wrapper>
   );
 }

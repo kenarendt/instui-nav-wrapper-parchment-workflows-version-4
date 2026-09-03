@@ -1,31 +1,3 @@
-/* Service launch points sit in a responsive grid.
- *
- * auto-fill rather than auto-fit: it keeps empty tracks, so a short final row
- * leaves cards at their normal width instead of stretching them across the
- * panel. Every card on the page stays the same size, which is the point of
- * the pattern.
- *
- * The Figma reference (91.04.001, notes 07/08) gives the card a 375-500px
- * range on desktop. Admin Connect is narrower than that full-width screen —
- * nav rail plus a trailing column — so the floor here is lower and
- * ServiceCard.css caps the ceiling at 500px. */
-.adminhub__cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
-  /* Equal rows: grid sizes each row to its own tallest card, so without this
-     a second row of short descriptions renders visibly stubbier than the
-     first. One height for every card on the page. */
-  grid-auto-rows: 1fr;
-  gap: var(--space-lg);
-  margin-top: var(--space-lg);
-}
-
-@media (max-width: 700px) {
-  .adminhub__cards {
-    grid-template-columns: 1fr;
-  }
-}
-
 .adminhub__promo {
   display: flex;
   flex-direction: column;
