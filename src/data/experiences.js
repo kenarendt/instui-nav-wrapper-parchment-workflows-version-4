@@ -11,6 +11,11 @@
  *   - Parchment Award Services: Transcript Services, Diploma Services, Dual Enrollment
  *   - Parchment Pathways Services: Receive
  * All admin service dashboards share one common dashboard pattern.
+ *
+ * Services carry no rollup count for the Connect surface. Aggregating a figure
+ * like "12 open orders" at the hub level means calling into every service
+ * before the page can paint, which the API cannot do cheaply. Counts belong on
+ * each service's own dashboard, under `dashboard`, where the data is local.
  */
 
 export const account = {
@@ -33,7 +38,6 @@ export const SERVICES = {
     icon: "file-text",
     description:
       "Manage learners and credentials, and fulfill orders for academic credentials.",
-    badge: { count: 12, label: "Open Orders" },
     dashboard: {
       openOrders: 12,
       metrics: [
@@ -55,7 +59,6 @@ export const SERVICES = {
     group: "award",
     icon: "award",
     description: "Issue digital and printed diplomas.",
-    badge: { count: 187, label: "Ready to issue" },
     dashboard: {
       openOrders: 187,
       metrics: [
@@ -77,7 +80,6 @@ export const SERVICES = {
     icon: "users",
     description:
       "Enroll learners into dual enrollment courses along with comprehensive enrollment management tools.",
-    badge: { count: 3, label: "New applications" },
     dashboard: {
       openOrders: 3,
       metrics: [
@@ -99,7 +101,6 @@ export const SERVICES = {
     group: "pathways",
     icon: "cloud-download",
     description: "Automate receiving academic credentials and documents.",
-    badge: { count: 4, label: "New documents" },
     dashboard: {
       openOrders: 4,
       metrics: [

@@ -22,10 +22,28 @@
   color: var(--icon-sidenav-color);
 }
 
-.adminhub__rows {
-  display: flex;
-  flex-direction: column;
-  margin-top: var(--space-md);
+/* Service launch points sit in a responsive grid.
+ *
+ * auto-fill rather than auto-fit: it keeps empty tracks, so the lone Pathways
+ * card stays the width of an Award card instead of stretching across the whole
+ * panel. That keeps every card on the page the same size, which is the point
+ * of the pattern.
+ *
+ * The Figma reference (91.04.001, notes 07/08) gives the card a 375-500px
+ * range on desktop. Admin Connect is narrower than that full-width screen —
+ * nav rail plus a trailing column — so the floor here is lower and
+ * ServiceCard.css caps the ceiling at 500px. */
+.adminhub__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+@media (max-width: 700px) {
+  .adminhub__cards {
+    grid-template-columns: 1fr;
+  }
 }
 
 .adminhub__promo {

@@ -3,7 +3,7 @@ import { LayoutDashboard, Sparkles, Inbox, CircleHelp } from "lucide-react";
 import Wrapper from "../components/Wrapper.jsx";
 import SchoolPickerModal from "../components/SchoolPickerModal.jsx";
 import Panel from "../components/blocks/Panel.jsx";
-import ServiceRow from "../components/blocks/ServiceRow.jsx";
+import ServiceCard from "../components/blocks/ServiceCard.jsx";
 import Button from "../components/Button.jsx";
 import { useBrowser } from "../browser/BrowserContext.jsx";
 import { SERVICE_GROUPS, serviceById, account } from "../data/experiences.js";
@@ -46,11 +46,11 @@ export default function AdminHub() {
         <h2 className="adminhub__group-title">{group.name}</h2>
         <span className="adminhub__brand">{group.brand}</span>
       </div>
-      <div className="adminhub__rows">
+      <div className="adminhub__cards">
         {group.services.map((id) => {
           const svc = serviceById(id);
           return (
-            <ServiceRow key={id} service={svc} onOpen={() => openService(svc)} />
+            <ServiceCard key={id} service={svc} onOpen={() => openService(svc)} />
           );
         })}
       </div>
