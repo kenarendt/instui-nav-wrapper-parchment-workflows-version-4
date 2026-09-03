@@ -149,33 +149,6 @@ export function defaultLanding(experiences = EXPERIENCES) {
   return admin ?? experiences[0];
 }
 
-/**
- * Switchable profiles listed in the account overlay.
- *
- * One account can carry several underlying accounts on the same email, but the
- * menu presents only the two top-level choices: Learner and Admin. Individual
- * admin services are reached from inside the Admin experience, not from this
- * menu. Each entry maps to the tab that opens — or is focused, if that tab is
- * already open. Both rows use the same avatar: this is one person signed in
- * with one email, so the initials mark is identical across accounts.
- */
-export const PROFILES = [
-  {
-    id: "learner",
-    role: "Learner Connect",
-    sub: null,
-    avatar: "pp",
-    tab: { kind: "learnerHub", title: "Learner Connect", dedupeKey: "learnerHub" },
-  },
-  {
-    id: "admin",
-    role: "Admin Connect",
-    sub: null,
-    avatar: "pp",
-    tab: { kind: "adminHub", title: "Admin Connect", dedupeKey: "adminHub" },
-  },
-];
-
 export function serviceById(id) {
   return SERVICES[id];
 }

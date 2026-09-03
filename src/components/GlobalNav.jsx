@@ -10,7 +10,6 @@ import {
   PanelLeftOpen,
   PanelLeftClose,
   ChevronsUpDown,
-  Check,
   User,
   Bell,
   Settings,
@@ -35,6 +34,35 @@ const DEFAULT_ITEMS = [
   { key: "help", label: "Help", Icon: CircleHelp },
 ];
 
+/**
+ * PlatformServicesMark — the 3x3 grid that stands for the Parchment platform
+ * as a whole. Drawn here rather than taken from the icon set, which has no
+ * filled 3x3 grid, and this needs to match the mark used elsewhere.
+ */
+function PlatformServicesMark({ size = 20 }) {
+  const cells = [0, 1, 2].flatMap((row) => [0, 1, 2].map((col) => [row, col]));
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      {cells.map(([row, col]) => (
+        <rect
+          key={`${row}-${col}`}
+          x={col * 7}
+          y={row * 7}
+          width="6"
+          height="6"
+          rx="1"
+        />
+      ))}
+    </svg>
+  );
+}
+
 function Avatar({ kind, initials }) {
   if (kind === "learner") {
     return (
@@ -58,11 +86,10 @@ export default function GlobalNav({
   items = DEFAULT_ITEMS,
   showAdd = false,
   productLogo = "canvas",
-  profiles = [],
-  activeProfileId,
-  onSwitchProfile,
   // Provided only on a service page where a school is selected.
   onChangeSchool,
+  // Provided on an admin service dashboard: returns to Admin Connect.
+  onPlatformServices,
   // Quick school switching from the institution mark. `schools` is every
   // school this admin can act for; picking one switches the page to it.
   schools = [],
@@ -72,7 +99,6 @@ export default function GlobalNav({
 }) {
   const [expanded, setExpanded] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [switcherOpen, setSwitcherOpen] = useState(false);
   const [schoolOpen, setSchoolOpen] = useState(false);
   const schoolBtnRef = useRef(null);
   const schoolMenuRef = useRef(null);
@@ -112,8 +138,6 @@ export default function GlobalNav({
     .map((n) => n.charAt(0))
     .join("");
 
-  const canSwitch = profiles.length > 0 && onSwitchProfile;
-
   const openAccount = () => {
     setExpanded(true);
     setAccountOpen(true);
@@ -121,7 +145,6 @@ export default function GlobalNav({
 
   const closeAccount = () => {
     setAccountOpen(false);
-    setSwitcherOpen(false);
   };
 
   const toggleExpanded = () => {
@@ -317,68 +340,33 @@ export default function GlobalNav({
             </button>
           </div>
 
-          {/* Profile card + switcher. With one account there is nothing to
-              switch to, so the card is a plain panel: no caret, not clickable. */}
+          {/* Profile card. Identity only — the experience switcher that used
+              to live here is gone, so there is no caret and nothing to open. */}
           <div className="gnav__profile">
-            {canSwitch ? (
-              <button
-                className="gnav__profile-card"
-                aria-expanded={switcherOpen}
-                aria-label="Switch profile"
-                onClick={() => setSwitcherOpen((o) => !o)}
-              >
-                <span className="gnav__profile-text">
-                  <span className="gnav__profile-name">{username}</span>
-                  <span className="gnav__profile-email">{account.email}</span>
-                  <span className="gnav__profile-badge">{userRole}</span>
-                </span>
-                <ChevronsUpDown size={18} strokeWidth={2} className="gnav__profile-caret" />
-              </button>
-            ) : (
-              <div className="gnav__profile-card gnav__profile-card--static">
-                <span className="gnav__profile-text">
-                  <span className="gnav__profile-name">{username}</span>
-                  <span className="gnav__profile-email">{account.email}</span>
-                  <span className="gnav__profile-badge">{userRole}</span>
-                </span>
-              </div>
-            )}
-
-            {switcherOpen && canSwitch && (
-              <div className="gnav__switcher" role="menu">
-                {profiles.map((p) => {
-                  // Active only on that experience's Connect screen — the
-                  // Connect screens are the only pages that set
-                  // activeProfileId. Every other row is hover-only.
-                  const isActive = activeProfileId === p.id;
-                  return (
-                    <button
-                      key={p.id}
-                      role="menuitem"
-                      aria-current={isActive ? "true" : undefined}
-                      className={`gnav__switch-item${isActive ? " gnav__switch-item--active" : ""}`}
-                      onClick={() => {
-                        onSwitchProfile(p);
-                        closeAccount();
-                      }}
-                    >
-                      <Avatar kind={p.avatar} initials={initials} />
-                      <span className="gnav__switch-text">
-                        <span className="gnav__switch-title">
-                          {username} | {p.role}
-                        </span>
-                        {p.sub && <span className="gnav__switch-sub">{p.sub}</span>}
-                      </span>
-                      {isActive && <Check size={16} strokeWidth={2.5} />}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+            <div className="gnav__profile-card gnav__profile-card--static">
+              <span className="gnav__profile-text">
+                <span className="gnav__profile-name">{username}</span>
+                <span className="gnav__profile-email">{account.email}</span>
+                <span className="gnav__profile-badge">{userRole}</span>
+              </span>
+            </div>
           </div>
 
           {/* Account menu */}
           <ul className="gnav__panel-menu">
+            {onPlatformServices && (
+              <li>
+                <button
+                  className="gnav__panel-link"
+                  onClick={() => {
+                    onPlatformServices();
+                    closeAccount();
+                  }}
+                >
+                  <PlatformServicesMark size={20} /> Platform Services
+                </button>
+              </li>
+            )}
             {onChangeSchool && (
               <li>
                 <button

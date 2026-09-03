@@ -283,7 +283,6 @@ export default function LearnerHub() {
         items: NAV_ITEMS,
         productLogo: "instructure",
       }}
-      activeProfileId="learner"
       experienceType="learner"
       showSchoolSummary
       title="Learner Connect"

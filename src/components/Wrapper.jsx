@@ -6,7 +6,6 @@ import { useBrowser } from "../browser/BrowserContext.jsx";
 import {
   ADMIN_SCHOOLS,
   LEARNER_SCHOOLS,
-  PROFILES,
   account,
   schoolById,
 } from "../data/experiences.js";
@@ -56,9 +55,6 @@ function capitalize(word) {
 
 export default function Wrapper({
   navProps = {},
-  // Set only by the Learner Connect and Admin Connect screens, so the matching
-  // account-menu row shows as active there and nowhere else.
-  activeProfileId,
   // "admin" | "learner". Admin pages name the school under the page title.
   experienceType,
   // Service name, on admin service pages that belong to one school at a time.
@@ -79,7 +75,6 @@ export default function Wrapper({
     expandedView,
     toggleExpandedView,
     multiSchool,
-    singleAccount,
     activeTab,
     setTabSchool,
   } = useBrowser();
@@ -137,10 +132,6 @@ export default function Wrapper({
 
   const nav = { ...navProps, ...(schoolIdentity ?? {}) };
 
-  const handleSwitchProfile = (profile) => {
-    openTab(profile.tab);
-  };
-
   const handleLogout = () => {
     window.location.reload();
   };
@@ -149,9 +140,17 @@ export default function Wrapper({
     <div className="wrap">
       <GlobalNav
         {...nav}
-        profiles={singleAccount ? [] : PROFILES}
-        activeProfileId={activeProfileId}
-        onSwitchProfile={singleAccount ? undefined : handleSwitchProfile}
+        // On a service dashboard, a way back to the hub that launched it.
+        onPlatformServices={
+          experienceType === "admin" && schoolScope
+            ? () =>
+                openTab({
+                  kind: "adminHub",
+                  title: "Admin Connect",
+                  dedupeKey: "adminHub",
+                })
+            : undefined
+        }
         // Clearing the school sends this tab back to the selection page.
         onChangeSchool={
           schoolScoped && school && activeTab

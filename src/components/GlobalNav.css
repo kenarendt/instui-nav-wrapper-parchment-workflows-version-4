@@ -401,66 +401,6 @@
   color: var(--heading-basecolor);
   width: fit-content;
 }
-.gnav__profile-caret {
-  color: var(--text-mutedcolor);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* Switcher dropdown */
-.gnav__switcher {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  z-index: 40;
-  background: var(--nav-bg);
-  border: 1px solid var(--nav-border-color);
-  border-radius: var(--radius-navitem);
-  box-shadow: var(--shadow-elevation1);
-  padding: var(--space-xs);
-  overflow: hidden;
-}
-.gnav__switch-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background: transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  color: var(--heading-basecolor);
-  text-align: left;
-}
-.gnav__switch-item:hover,
-.gnav__switch-item:focus-visible {
-  background: #e8f0fc;
-}
-/* Active = you are on that experience's Connect screen. */
-.gnav__switch-item--active,
-.gnav__switch-item--active:hover,
-.gnav__switch-item--active:focus-visible {
-  background: var(--button-primary-bg);
-  color: #fff;
-}
-.gnav__switch-text {
-  display: flex;
-  flex-direction: column;
-  flex: 1 0 0;
-  min-width: 0;
-}
-.gnav__switch-title {
-  font-family: var(--fontfamily-base);
-  font-size: 14px;
-  line-height: 1.25;
-}
-.gnav__switch-sub {
-  font-family: var(--fontfamily-base);
-  font-size: 12px;
-  opacity: 0.85;
-}
 
 /* Account menu */
 .gnav__panel-menu {

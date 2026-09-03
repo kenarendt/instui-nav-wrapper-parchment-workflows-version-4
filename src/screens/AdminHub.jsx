@@ -91,7 +91,6 @@ export default function AdminHub() {
         items: NAV_ITEMS,
         productLogo: "instructure",
       }}
-      activeProfileId="admin"
       experienceType="admin"
       title="Admin Connect"
       actions={
