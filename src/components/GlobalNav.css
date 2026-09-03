@@ -530,3 +530,118 @@
   font-size: var(--fontsize-textbase);
   color: #cf1f24;
 }
+
+/* ---- School switcher ----
+ * The institution mark doubles as the switcher on a service page when the
+ * admin covers several schools. It keeps the plain mark's box exactly, so
+ * turning it into a button changes nothing about the rail's layout.
+ */
+.gnav__institution--switch {
+  border: none;
+  border-bottom: var(--nav-border-width) solid var(--nav-border-color);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.gnav--expanded .gnav__institution--switch {
+  border-bottom: none;
+  border-radius: var(--radius-navitem);
+}
+
+.gnav__institution--switch:hover,
+.gnav__institution--open {
+  background: #eef1f8;
+}
+
+.gnav__institution--switch:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: -2px;
+}
+
+.gnav__institution-caret {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--text-mutedcolor);
+}
+
+/* Sits beside the rail, like the account panel, so it never reflows the rail
+   itself. */
+.gnav__schoolmenu {
+  position: absolute;
+  top: var(--nav-minimized-margin);
+  left: calc(100% - 4px);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: 288px;
+  padding: var(--space-sm);
+  background: var(--nav-bg);
+  border: var(--nav-border-width) solid var(--nav-border-color);
+  border-radius: var(--radius-nav-minimized);
+  box-shadow: 0 12px 32px rgba(15, 23, 33, 0.18);
+}
+
+.gnav__schoolmenu-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-md);
+  margin-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--nav-border-color);
+}
+
+.gnav__schoolmenu-label {
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  color: var(--text-mutedcolor);
+}
+
+.gnav__schoolmenu-current {
+  font-family: var(--fontfamily-base);
+  font-weight: var(--fontweight-body-strong);
+  font-size: var(--fontsize-textbase);
+  color: var(--heading-basecolor);
+}
+
+.gnav__schoolmenu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: var(--radius-navitem);
+  background: transparent;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textbase);
+  color: var(--heading-basecolor);
+  text-align: left;
+  cursor: pointer;
+}
+
+.gnav__schoolmenu-item:hover {
+  background: #eef1f8;
+}
+
+.gnav__schoolmenu-item:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: -2px;
+}
+
+.gnav__schoolmenu-crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.gnav__schoolmenu-name {
+  min-width: 0;
+  line-height: 1.3;
+}

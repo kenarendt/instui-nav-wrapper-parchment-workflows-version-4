@@ -15,14 +15,16 @@ import "./SchoolCard.css";
  * which school they need to work in.
  *
  * `emphasis` marks the admin's usual school, which the page puts above the
- * rest. `actionLabel` differs between the tiers ("Continue With This
- * Selection" above, "Add" below) but both do the same thing: open the service
- * for that school.
+ * rest. The tiers differ in label and button weight — "Continue with this
+ * selection" as a primary button above, "Add" as a secondary below — so the
+ * recommended choice carries the visual weight. Both do the same thing: open
+ * the service for that school.
  */
 export default function SchoolCard({
   school,
   onSelect,
   actionLabel = "Add",
+  actionVariant = "secondary",
   emphasis = false,
 }) {
   return (
@@ -36,7 +38,7 @@ export default function SchoolCard({
       title={school.name}
       meta={[school.location, school.detail]}
       action={
-        <Button variant="primary" onClick={() => onSelect(school)}>
+        <Button variant={actionVariant} onClick={() => onSelect(school)}>
           {actionLabel}
           {/* Both tiers repeat a short label across cards, so each button
               names its school to a screen reader. */}

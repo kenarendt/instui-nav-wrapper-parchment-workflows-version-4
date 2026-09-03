@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard,
   BookText,
@@ -63,11 +63,49 @@ export default function GlobalNav({
   onSwitchProfile,
   // Provided only on a service page where a school is selected.
   onChangeSchool,
+  // Quick school switching from the institution mark. `schools` is every
+  // school this admin can act for; picking one switches the page to it.
+  schools = [],
+  currentSchoolId,
+  onSelectSchool,
   onLogout,
 }) {
   const [expanded, setExpanded] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [switcherOpen, setSwitcherOpen] = useState(false);
+  const [schoolOpen, setSchoolOpen] = useState(false);
+  const schoolBtnRef = useRef(null);
+  const schoolMenuRef = useRef(null);
+
+  // Other schools this admin can switch to. The one they're in is named in
+  // the menu's header rather than listed, since choosing it would do nothing.
+  const otherSchools = schools.filter((s) => s.id !== currentSchoolId);
+  const canSwitchSchool = Boolean(onSelectSchool) && otherSchools.length > 0;
+
+  // Click-away and Escape, so the menu can always be dismissed.
+  useEffect(() => {
+    if (!schoolOpen) return undefined;
+    const onDown = (e) => {
+      if (
+        !schoolBtnRef.current?.contains(e.target) &&
+        !schoolMenuRef.current?.contains(e.target)
+      ) {
+        setSchoolOpen(false);
+      }
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setSchoolOpen(false);
+        schoolBtnRef.current?.focus();
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [schoolOpen]);
 
   const initials = username
     .split(" ")
@@ -111,15 +149,79 @@ export default function GlobalNav({
           </button>
         )}
 
-        {/* Institution logo */}
-        <div className="gnav__institution" title={institutionName}>
-          <span className="gnav__avatar gnav__avatar--rect" aria-hidden="true">
-            {logo || <SchoolCrest size={40} />}
-          </span>
-          {expanded && (
-            <span className="gnav__institution-name">{institutionName}</span>
-          )}
-        </div>
+        {/* Institution logo. On a service page where the admin covers several
+            schools it doubles as the school switcher: the mark already says
+            which school you are in, so it is the natural place to change it. */}
+        {canSwitchSchool ? (
+          <>
+            <button
+              ref={schoolBtnRef}
+              className={`gnav__institution gnav__institution--switch${
+                schoolOpen ? " gnav__institution--open" : ""
+              }`}
+              title={`${institutionName} — switch school`}
+              aria-label={`School: ${institutionName}. Switch school`}
+              aria-haspopup="menu"
+              aria-expanded={schoolOpen}
+              onClick={() => setSchoolOpen((o) => !o)}
+            >
+              <span className="gnav__avatar gnav__avatar--rect" aria-hidden="true">
+                {logo || <SchoolCrest size={40} />}
+              </span>
+              {expanded && (
+                <>
+                  <span className="gnav__institution-name">{institutionName}</span>
+                  <ChevronsUpDown
+                    size={16}
+                    strokeWidth={2}
+                    className="gnav__institution-caret"
+                    aria-hidden="true"
+                  />
+                </>
+              )}
+            </button>
+            {schoolOpen && (
+              <div
+                ref={schoolMenuRef}
+                className="gnav__schoolmenu"
+                role="menu"
+                aria-label="Switch school"
+              >
+                <div className="gnav__schoolmenu-head">
+                  <span className="gnav__schoolmenu-label">Current school</span>
+                  <span className="gnav__schoolmenu-current">
+                    {institutionName}
+                  </span>
+                </div>
+                {otherSchools.map((s) => (
+                  <button
+                    key={s.id}
+                    role="menuitem"
+                    className="gnav__schoolmenu-item"
+                    onClick={() => {
+                      onSelectSchool(s);
+                      setSchoolOpen(false);
+                    }}
+                  >
+                    <span className="gnav__schoolmenu-crest" aria-hidden="true">
+                      <SchoolCrest size={28} variant={s.crest} />
+                    </span>
+                    <span className="gnav__schoolmenu-name">{s.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="gnav__institution" title={institutionName}>
+            <span className="gnav__avatar gnav__avatar--rect" aria-hidden="true">
+              {logo || <SchoolCrest size={40} />}
+            </span>
+            {expanded && (
+              <span className="gnav__institution-name">{institutionName}</span>
+            )}
+          </div>
+        )}
 
         {/* Account item — opens the Account panel */}
         <button

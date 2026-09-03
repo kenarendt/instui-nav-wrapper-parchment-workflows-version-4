@@ -142,6 +142,7 @@ export default function SchoolSelect({ serviceId }) {
               school={primary}
               emphasis
               actionLabel="Continue with this selection"
+              actionVariant="primary"
               onSelect={choose}
             />
           </div>

@@ -158,6 +158,15 @@ export default function Wrapper({
             ? () => setTabSchool(activeTab.id, null)
             : undefined
         }
+        // Quick switch straight from the institution mark, without a trip
+        // back to the selection page.
+        schools={schoolScoped && school ? ADMIN_SCHOOLS : []}
+        currentSchoolId={school?.id}
+        onSelectSchool={
+          schoolScoped && school && activeTab
+            ? (picked) => setTabSchool(activeTab.id, picked.id)
+            : undefined
+        }
         onLogout={handleLogout}
       />
 
