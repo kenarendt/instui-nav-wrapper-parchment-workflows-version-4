@@ -3,14 +3,14 @@ import ServiceGraphic from "./ServiceGraphic.jsx";
 import Button from "../Button.jsx";
 
 /**
- * ServiceCard — a service launch point on Admin Connect.
+ * ServiceCard — a service launch point on the Platform Services screen.
  *
  * The card chrome and layout live in LaunchCard, which follows the anatomy in
  * Figma 91.04.001 Services Selector (node 412:25375). This supplies the
  * service's graphic, name, description, and Open action.
  *
  * Two elements of the reference are not built here:
- *   01 Platform Category — the platform lockup. Admin Connect lists every
+ *   01 Platform Category — the platform lockup. Platform Services lists every
  *      service under one "Parchment Services" heading, because which platform
  *      a service belongs to isn't useful at the point of choosing one, and the
  *      Parchment Pathways branding is being retired. `lockup` passes through

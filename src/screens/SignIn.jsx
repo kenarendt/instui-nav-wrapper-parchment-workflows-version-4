@@ -104,7 +104,7 @@ export default function SignIn({ onSignIn }) {
               aria-pressed={landing === "admin"}
               onClick={() => setLanding("admin")}
             >
-              Admin Connect
+              Platform Services
             </button>
             <button
               type="button"

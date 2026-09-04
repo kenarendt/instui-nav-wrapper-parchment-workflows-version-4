@@ -1,4 +1,4 @@
-import { LayoutDashboard, Sparkles, Inbox, CircleHelp } from "lucide-react";
+import { LayoutDashboard, Sparkles, Inbox, CircleHelp, Settings } from "lucide-react";
 import Wrapper from "../components/Wrapper.jsx";
 import Panel from "../components/blocks/Panel.jsx";
 import ServiceCard from "../components/blocks/ServiceCard.jsx";
@@ -32,8 +32,20 @@ export default function AdminHub() {
   // One flat grid under a single heading. The Award / Pathways split is gone:
   // an admin picking a service doesn't need to know which platform it sits on,
   // and the Pathways branding is being retired.
+  //
+  // The container greets rather than labels: the page title already names the
+  // screen, so repeating it here would say nothing. The greeting and its
+  // sentence come from the production welcome mat.
+  //
+  // Preferences sit behind the kebab, matching every other panel's affordance.
+  // The preference itself would let an admin skip this screen and land inside
+  // a service, which the prototype doesn't model — the item is a placeholder.
   const main = (
-    <Panel title="Parchment Services">
+    <Panel
+      title={`Welcome back, ${account.name.split(" ")[0]}`}
+      subtitle="You have access to multiple Parchment platform services. Please select where you would like to start."
+      menuItems={[{ label: "Set your preferences", Icon: Settings }]}
+    >
       <div className="launch-grid">
         {SERVICE_ORDER.map((id) => {
           const svc = serviceById(id);
@@ -92,7 +104,7 @@ export default function AdminHub() {
         productLogo: "instructure",
       }}
       experienceType="admin"
-      title="Admin Connect"
+      title="Platform Services"
       actions={
         <>
           <Button variant="secondary">Customize Dashboard</Button>

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowLeft, LogOut, UserRound } from "lucide-react";
 import ServiceGraphic from "../components/blocks/ServiceGraphic.jsx";
 import SchoolCard from "../components/blocks/SchoolCard.jsx";
+import useDismissOnOutside from "../hooks/useDismissOnOutside.js";
 import { useBrowser } from "../browser/BrowserContext.jsx";
 import { ADMIN_SCHOOLS, account, serviceById } from "../data/experiences.js";
 import "./SchoolSelect.css";
@@ -28,24 +29,14 @@ export default function SchoolSelect({ serviceId }) {
   const { activeTab, setTabSchool, closeTab } = useBrowser();
   const [menuOpen, setMenuOpen] = useState(false);
   const accountRef = useRef(null);
+  const avatarRef = useRef(null);
 
-  // Click-away and Escape, so the menu doesn't strand the page in an open
-  // state the user can't dismiss.
-  useEffect(() => {
-    if (!menuOpen) return undefined;
-    const onDown = (e) => {
-      if (!accountRef.current?.contains(e.target)) setMenuOpen(false);
-    };
-    const onKey = (e) => {
-      if (e.key === "Escape") setMenuOpen(false);
-    };
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [menuOpen]);
+  useDismissOnOutside(
+    menuOpen,
+    () => setMenuOpen(false),
+    [accountRef],
+    avatarRef
+  );
 
   const service = serviceById(serviceId);
   if (!service) return null;
@@ -61,7 +52,7 @@ export default function SchoolSelect({ serviceId }) {
 
   // Nothing has happened yet — no school chosen means no work to return to —
   // so back closes this tab and hands focus to whichever tab was underneath,
-  // which is Admin Connect.
+  // which is Platform Services.
   const goBack = () => {
     if (activeTab) closeTab(activeTab.id);
   };
@@ -86,6 +77,7 @@ export default function SchoolSelect({ serviceId }) {
 
         <div className="schoolsel__account" ref={accountRef}>
           <button
+            ref={avatarRef}
             className="schoolsel__avatar"
             aria-haspopup="menu"
             aria-expanded={menuOpen}

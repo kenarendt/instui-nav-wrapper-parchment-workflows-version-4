@@ -7,7 +7,7 @@ import BrowserFrame from "./browser/BrowserFrame.jsx";
  * App — top-level flow.
  *
  * Starts at sign-in. The demo account carries both a Learner and an Admin
- * experience, so sign-in defaults to Admin Connect (Admin wins when both
+ * experience, so sign-in defaults to Platform Services (Admin wins when both
  * exist). The sign-in screen exposes a prototype override to land on
  * Learner Connect instead. From there, the simulated browser owns navigation:
  * Connect modules and the nav profile switcher open or focus tabs.
@@ -22,7 +22,7 @@ import BrowserFrame from "./browser/BrowserFrame.jsx";
 // key with the tab the account menu would open, so choosing that experience
 // refocuses this tab instead of opening a second one.
 const LANDING_TABS = {
-  admin: { kind: "adminHub", title: "Admin Connect", dedupeKey: "adminHub" },
+  admin: { kind: "adminHub", title: "Platform Services", dedupeKey: "adminHub" },
   learner: { kind: "learnerHub", title: "Learner Connect", dedupeKey: "learnerHub" },
 };
 

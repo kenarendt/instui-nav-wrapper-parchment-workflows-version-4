@@ -6,7 +6,7 @@ import "./SchoolCard.css";
 /**
  * SchoolCard — a school launch point on the school selection page.
  *
- * Same shell as the Admin Connect service cards, so the two screens read as
+ * Same shell as the Platform Services cards, so the two screens read as
  * one pattern: crest, school name, location and detail, and a full-width
  * action that opens the service for that school.
  *

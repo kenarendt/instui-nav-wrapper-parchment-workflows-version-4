@@ -7,7 +7,7 @@ import "./LaunchCard.css";
  * 412:25375): a graphic, a name, supporting lines, and a full-width primary
  * action pinned to the bottom so buttons line up across a row.
  *
- * Shared so the Admin Connect service cards and the school selection cards
+ * Shared so the Platform Services cards and the school selection cards
  * can't drift apart. Callers supply the graphic and the action; this owns the
  * chrome and the layout.
  *

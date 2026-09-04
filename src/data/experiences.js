@@ -115,7 +115,7 @@ export const SERVICES = {
   },
 };
 
-/** Admin services in the order they appear on Admin Connect. */
+/** Admin services in the order they appear on Platform Services. */
 export const SERVICE_ORDER = [
   "transcript",
   "diploma",
@@ -133,7 +133,7 @@ export const EXPERIENCES = [
     type: "admin",
     label: "Admin",
     sublabel: account.adminRole,
-    landing: { kind: "adminHub", title: "Admin Connect", dedupeKey: "adminHub" },
+    landing: { kind: "adminHub", title: "Platform Services", dedupeKey: "adminHub" },
   },
   {
     id: "learner",

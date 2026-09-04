@@ -26,7 +26,7 @@ import "./Wrapper.css";
  *
  * Admin pages (`experienceType="admin"`) name the school they act on behalf of
  * under the page title, and carry that school's crest in the nav. Pages that
- * are not scoped to one school — Admin Connect, Platform settings — say so
+ * are not scoped to one school — Platform Services, Platform settings — say so
  * instead of naming one: a single-school admin sees their institution, and a
  * multi-school admin sees a neutral mark and the number of schools they cover.
  *
@@ -146,7 +146,7 @@ export default function Wrapper({
             ? () =>
                 openTab({
                   kind: "adminHub",
-                  title: "Admin Connect",
+                  title: "Platform Services",
                   dedupeKey: "adminHub",
                 })
             : undefined

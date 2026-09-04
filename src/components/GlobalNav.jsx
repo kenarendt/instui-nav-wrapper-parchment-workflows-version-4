@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   LayoutDashboard,
   BookText,
@@ -22,6 +22,7 @@ import {
 import CanvasLogo from "./CanvasLogo.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
 import Toggle from "./Toggle.jsx";
+import useDismissOnOutside from "../hooks/useDismissOnOutside.js";
 import { account } from "../data/experiences.js";
 import "./GlobalNav.css";
 
@@ -88,7 +89,7 @@ export default function GlobalNav({
   productLogo = "canvas",
   // Provided only on a service page where a school is selected.
   onChangeSchool,
-  // Provided on an admin service dashboard: returns to Admin Connect.
+  // Provided on an admin service dashboard: returns to Platform Services.
   onPlatformServices,
   // Quick school switching from the institution mark. `schools` is every
   // school this admin can act for; picking one switches the page to it.
@@ -108,30 +109,12 @@ export default function GlobalNav({
   const otherSchools = schools.filter((s) => s.id !== currentSchoolId);
   const canSwitchSchool = Boolean(onSelectSchool) && otherSchools.length > 0;
 
-  // Click-away and Escape, so the menu can always be dismissed.
-  useEffect(() => {
-    if (!schoolOpen) return undefined;
-    const onDown = (e) => {
-      if (
-        !schoolBtnRef.current?.contains(e.target) &&
-        !schoolMenuRef.current?.contains(e.target)
-      ) {
-        setSchoolOpen(false);
-      }
-    };
-    const onKey = (e) => {
-      if (e.key === "Escape") {
-        setSchoolOpen(false);
-        schoolBtnRef.current?.focus();
-      }
-    };
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [schoolOpen]);
+  useDismissOnOutside(
+    schoolOpen,
+    () => setSchoolOpen(false),
+    [schoolBtnRef, schoolMenuRef],
+    schoolBtnRef
+  );
 
   const initials = username
     .split(" ")
