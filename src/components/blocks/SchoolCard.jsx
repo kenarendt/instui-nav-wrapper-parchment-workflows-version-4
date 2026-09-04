@@ -15,15 +15,16 @@ import "./SchoolCard.css";
  * which school they need to work in.
  *
  * `emphasis` marks the admin's usual school, which the page puts above the
- * rest. The tiers differ in label and button weight — "Continue with this
- * selection" as a primary button above, "Add" as a secondary below — so the
- * recommended choice carries the visual weight. Both do the same thing: open
- * the service for that school.
+ * rest. Both tiers say "Continue" and both do the same thing — enter the
+ * service as that school. The hierarchy is carried by button weight and the
+ * primary's longer phrasing ("Continue with this selection", since that card
+ * is already selected), not by a different verb: a different verb would imply
+ * a different outcome.
  */
 export default function SchoolCard({
   school,
   onSelect,
-  actionLabel = "Add",
+  actionLabel = "Continue",
   actionVariant = "secondary",
   emphasis = false,
 }) {

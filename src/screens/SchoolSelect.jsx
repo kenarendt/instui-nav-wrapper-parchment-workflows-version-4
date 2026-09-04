@@ -18,15 +18,22 @@ import "./SchoolSelect.css";
  * The shell is a slim top bar rather than the global nav, because this is a
  * gate. Every rail item — Dashboard, Inbox, Settings — is scoped to a school
  * that hasn't been chosen, so a rail here could only show items that don't
- * work yet. The bar carries the two things that do apply: a way back, and the
- * account, so an admin who lands here by accident isn't stuck with one door.
+ * work yet.
+ *
+ * Back only appears when there is a Platform Services hub to go back to. An
+ * account with a single service has no hub, so sign-in lands straight here and
+ * "Back to my services" would have no destination — it used to close the only
+ * tab and leave a blank page. In that case the page is a required choice:
+ * no back, and sign out is the only way past it.
  *
  * Two tiers, following the production page: the admin's usual school on top,
- * the rest under "Related schools". Both actions do the same thing — open the
- * service for that school. The tiers are hierarchy, not different behaviour.
+ * the rest under "Related schools". Both actions do the same thing — enter the
+ * service as that school — so both say "Continue". Different verbs across the
+ * tiers would imply different outcomes.
  */
 export default function SchoolSelect({ serviceId }) {
-  const { activeTab, setTabSchool, closeTab } = useBrowser();
+  const { activeTab, setTabSchool, closeTab, openTab, singleAccount } =
+    useBrowser();
   const [menuOpen, setMenuOpen] = useState(false);
   const accountRef = useRef(null);
   const avatarRef = useRef(null);
@@ -50,10 +57,18 @@ export default function SchoolSelect({ serviceId }) {
     if (activeTab) setTabSchool(activeTab.id, school.id);
   };
 
-  // Nothing has happened yet — no school chosen means no work to return to —
-  // so back closes this tab and hands focus to whichever tab was underneath,
-  // which is Platform Services.
+  // With one service on the account there is no hub, so there is nowhere for
+  // back to lead and the choice is required.
+  const canGoBack = !singleAccount;
+
+  // Focus the hub (or open it if its tab was closed), then drop this one.
+  // Nothing has happened here yet, so leaving no trace is the honest result.
   const goBack = () => {
+    openTab({
+      kind: "adminHub",
+      title: "Platform Services",
+      dedupeKey: "adminHub",
+    });
     if (activeTab) closeTab(activeTab.id);
   };
 
@@ -66,14 +81,18 @@ export default function SchoolSelect({ serviceId }) {
   return (
     <div className="schoolsel">
       <header className="schoolsel__bar">
-        <button className="schoolsel__back" onClick={goBack}>
-          <span className="schoolsel__back-icon" aria-hidden="true">
-            <ArrowLeft size={18} strokeWidth={2.5} />
-          </span>
-          <span className="schoolsel__back-label">
-            <strong>Back to</strong> my services
-          </span>
-        </button>
+        {canGoBack ? (
+          <button className="schoolsel__back" onClick={goBack}>
+            <span className="schoolsel__back-icon" aria-hidden="true">
+              <ArrowLeft size={18} strokeWidth={2.5} />
+            </span>
+            <span className="schoolsel__back-label">
+              <strong>Back to</strong> my services
+            </span>
+          </button>
+        ) : (
+          <span />
+        )}
 
         <div className="schoolsel__account" ref={accountRef}>
           <button
@@ -93,10 +112,14 @@ export default function SchoolSelect({ serviceId }) {
                 <span className="schoolsel__menu-email">{account.email}</span>
                 <span className="schoolsel__menu-role">{account.adminRole}</span>
               </div>
-              <button className="schoolsel__menu-item" role="menuitem">
-                <UserRound size={18} strokeWidth={2} aria-hidden="true" />
-                Account settings
-              </button>
+              {/* A required choice offers no side trips — sign out is the
+                  only way past this page. */}
+              {canGoBack && (
+                <button className="schoolsel__menu-item" role="menuitem">
+                  <UserRound size={18} strokeWidth={2} aria-hidden="true" />
+                  Account settings
+                </button>
+              )}
               <button
                 className="schoolsel__menu-item"
                 role="menuitem"
@@ -117,6 +140,7 @@ export default function SchoolSelect({ serviceId }) {
             <h1 className="schoolsel__title">{service.name}</h1>
             <p className="schoolsel__sub">
               You have access to multiple schools with this service.
+              {!canGoBack && " Choose one to continue."}
             </p>
           </div>
         </header>
@@ -150,7 +174,7 @@ export default function SchoolSelect({ serviceId }) {
                 <SchoolCard
                   key={school.id}
                   school={school}
-                  actionLabel="Add"
+                  actionLabel="Continue"
                   onSelect={choose}
                 />
               ))}
