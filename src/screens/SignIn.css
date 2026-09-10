@@ -183,3 +183,14 @@
   outline: var(--focus-outline-width) solid var(--focus-outline-color);
   outline-offset: 2px;
 }
+
+/* Plain-language summary of where the current prototype settings land. */
+.signin__demo-note {
+  margin: var(--space-xs) 0 0;
+  font-family: var(--fontfamily-base);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text-baseoncolor);
+  opacity: 0.85;
+}

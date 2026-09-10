@@ -17,7 +17,7 @@ import {
   Moon,
   ALargeSmall,
   Contrast,
-  Building2,
+  SlidersHorizontal,
 } from "lucide-react";
 import CanvasLogo from "./CanvasLogo.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
@@ -34,35 +34,6 @@ const DEFAULT_ITEMS = [
   { key: "history", label: "History", Icon: Clock },
   { key: "help", label: "Help", Icon: CircleHelp },
 ];
-
-/**
- * PlatformServicesMark — the 3x3 grid that stands for the Parchment platform
- * as a whole. Drawn here rather than taken from the icon set, which has no
- * filled 3x3 grid, and this needs to match the mark used elsewhere.
- */
-function PlatformServicesMark({ size = 20 }) {
-  const cells = [0, 1, 2].flatMap((row) => [0, 1, 2].map((col) => [row, col]));
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 20 20"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      {cells.map(([row, col]) => (
-        <rect
-          key={`${row}-${col}`}
-          x={col * 7}
-          y={row * 7}
-          width="6"
-          height="6"
-          rx="1"
-        />
-      ))}
-    </svg>
-  );
-}
 
 function Avatar({ kind, initials }) {
   if (kind === "learner") {
@@ -87,12 +58,13 @@ export default function GlobalNav({
   items = DEFAULT_ITEMS,
   showAdd = false,
   productLogo = "canvas",
-  // Provided only on a service page where a school is selected.
-  onChangeSchool,
-  // Provided on an admin service dashboard: returns to Platform Services.
-  onPlatformServices,
+  // Opens platform-level settings. Lives in the account menu because it
+  // configures the account across every service rather than anything inside
+  // the service on screen.
+  onPlatformSettings,
   // Quick school switching from the institution mark. `schools` is every
-  // school this admin can act for; picking one switches the page to it.
+  // school this admin can act for inside the service on screen; picking one
+  // switches the page to it.
   schools = [],
   currentSchoolId,
   onSelectSchool,
@@ -335,34 +307,13 @@ export default function GlobalNav({
             </div>
           </div>
 
-          {/* Account menu */}
+          {/* Account menu. Platform Services used to sit at the top of this
+              list; the services switcher in the page header replaced it, and
+              "Change schools" went with the school selection screen. Platform
+              Settings follows Account Settings because both configure the
+              account rather than the work on screen — one at platform level,
+              one at user level. */}
           <ul className="gnav__panel-menu">
-            {onPlatformServices && (
-              <li>
-                <button
-                  className="gnav__panel-link"
-                  onClick={() => {
-                    onPlatformServices();
-                    closeAccount();
-                  }}
-                >
-                  <PlatformServicesMark size={20} /> Platform Services
-                </button>
-              </li>
-            )}
-            {onChangeSchool && (
-              <li>
-                <button
-                  className="gnav__panel-link"
-                  onClick={() => {
-                    onChangeSchool();
-                    closeAccount();
-                  }}
-                >
-                  <Building2 size={20} strokeWidth={2} /> Change schools
-                </button>
-              </li>
-            )}
             <li>
               <button className="gnav__panel-link">
                 <User size={20} strokeWidth={2} /> Profile
@@ -378,6 +329,20 @@ export default function GlobalNav({
                 <Settings size={20} strokeWidth={2} /> Account Settings
               </button>
             </li>
+            {onPlatformSettings && (
+              <li>
+                <button
+                  className="gnav__panel-link"
+                  onClick={() => {
+                    onPlatformSettings();
+                    closeAccount();
+                  }}
+                >
+                  <SlidersHorizontal size={20} strokeWidth={2} /> Platform
+                  Settings
+                </button>
+              </li>
+            )}
           </ul>
 
           {/* User interface controls */}

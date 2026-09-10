@@ -48,7 +48,7 @@ export default function DiplomaDashboard() {
         productLogo: "parchment",
       }}
       experienceType="admin"
-      schoolScope="Diploma Services"
+      serviceId="diploma"
       title="Diploma Services Dashboard"
       actions={
         <>

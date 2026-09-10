@@ -1,13 +1,15 @@
 import { Maximize, Minimize } from "lucide-react";
 import GlobalNav from "./GlobalNav.jsx";
 import IconButton from "./IconButton.jsx";
+import ServiceSwitcher from "./ServiceSwitcher.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
 import { useBrowser } from "../browser/BrowserContext.jsx";
 import {
-  ADMIN_SCHOOLS,
   LEARNER_SCHOOLS,
   account,
   schoolById,
+  serviceById,
+  serviceSchools,
 } from "../data/experiences.js";
 import "./Wrapper.css";
 
@@ -15,30 +17,32 @@ import "./Wrapper.css";
  * Wrapper — the Desktop Wrapper (beta) page shell.
  *
  * Composes GlobalNav + a content region (header, main, optional trailing
- * content area). The nav's profile switcher opens/focuses the tab for the
- * chosen profile.
+ * content area).
  *
- * Every page gets an expand/collapse control in the header actions. Expanded
- * fills the content container; collapsed caps it at a fixed max width. The
- * trailing rail stays a fixed width in both states — the main column is the
+ * Every page carries the same two controls at the top right, in this order:
+ * the services switcher, then expand/collapse. They come after whatever the
+ * page passes as `actions`, so a page-specific control like Customize
+ * Dashboard sits to their left. Keeping the order fixed means the way out of a
+ * service is in the same place on every screen, which is what makes a flat
+ * architecture navigable.
+ *
+ * Expanded fills the content container; collapsed caps it at a fixed max width.
+ * The trailing rail stays a fixed width in both states — the main column is the
  * side that flexes. The state is a display preference held in BrowserContext,
  * so toggling it on one page applies everywhere.
  *
- * Admin pages (`experienceType="admin"`) name the school they act on behalf of
- * under the page title, and carry that school's crest in the nav. Pages that
- * are not scoped to one school — Platform Services, Platform settings — say so
- * instead of naming one: a single-school admin sees their institution, and a
- * multi-school admin sees a neutral mark and the number of schools they cover.
+ * Pass `serviceId` on an admin service page. The school an admin acts for is
+ * scoped to the service, so that id decides both which school the page names
+ * under its title and which schools the nav's institution mark offers. An admin
+ * can cover four schools in Transcript Services and one in Receive, and the
+ * switcher disappears in the second case because there is nothing to switch to.
  *
- * Learner pages follow the same rule for the nav mark. Pass
- * `showSchoolSummary` to also state how many schools are connected under the
- * page title (Learner Connect does).
+ * Admin pages name the school they act on behalf of under the page title and
+ * carry that school's crest in the nav. A page that is not scoped to one school
+ * (Platform Settings) says so instead of naming one.
  *
- * Pass `schoolScope` (the service name) on an admin service page. When the
- * signed-in admin supports multiple schools, the tab shows the school
- * selection page until one is chosen; here it swaps the nav's institution mark
- * for that school's crest and adds "Change schools" to the account menu, which
- * clears the choice and returns the tab to that page.
+ * Learner pages follow the same rule for the nav mark. Pass `showSchoolSummary`
+ * to also state how many schools are connected under the page title.
  */
 // Spell out small counts, per the house style: one through nine as words,
 // 10 and above as numerals.
@@ -57,8 +61,8 @@ export default function Wrapper({
   navProps = {},
   // "admin" | "learner". Admin pages name the school under the page title.
   experienceType,
-  // Service name, on admin service pages that belong to one school at a time.
-  schoolScope,
+  // Service id, on admin service pages that act for one school at a time.
+  serviceId,
   // Learner pages: state how many schools are connected under the page title.
   showSchoolSummary = false,
   breadcrumb,
@@ -71,18 +75,20 @@ export default function Wrapper({
   children,
 }) {
   const {
-    openTab,
     expandedView,
     toggleExpandedView,
-    multiSchool,
+    session,
     activeTab,
     setTabSchool,
+    openTab,
   } = useBrowser();
-  // A school only comes into play on a service page, and only when this admin
-  // supports more than one school. A service tab without one never reaches
-  // this shell — it renders the school selection page instead.
-  const schoolScoped = Boolean(schoolScope) && multiSchool;
-  const school = schoolScoped ? schoolById(activeTab?.params?.schoolId) : undefined;
+
+  const service = serviceId ? serviceById(serviceId) : undefined;
+  // Every school this admin covers inside this service, and the one on screen.
+  const schools = service ? serviceSchools(serviceId, session) : [];
+  const school = service
+    ? schoolById(activeTab?.params?.schoolId) ?? schools[0]
+    : undefined;
 
   // What the header and nav say about school context.
   let schoolLine = null;
@@ -94,12 +100,9 @@ export default function Wrapper({
         institutionName: school.name,
         logo: <SchoolCrest size={40} variant={school.crest} />,
       };
-    } else if (multiSchool) {
-      // Spans every school this admin covers, so it names none of them. On a
-      // service page still waiting on a choice, it says nothing at all.
-      schoolLine = schoolScope
-        ? null
-        : `Administering ${countWord(ADMIN_SCHOOLS.length)} schools`;
+    } else if (session.multiSchool !== false) {
+      // Not scoped to one school, so it names none of them.
+      schoolLine = "Across all of your schools";
       schoolIdentity = {
         institutionName: "Multiple schools",
         logo: <SchoolCrest size={40} variant="generic" />,
@@ -140,31 +143,23 @@ export default function Wrapper({
     <div className="wrap">
       <GlobalNav
         {...nav}
-        // On a service dashboard, a way back to the hub that launched it.
-        onPlatformServices={
-          experienceType === "admin" && schoolScope
-            ? () =>
-                openTab({
-                  kind: "adminHub",
-                  title: "Platform Services",
-                  dedupeKey: "adminHub",
-                })
-            : undefined
-        }
-        // Clearing the school sends this tab back to the selection page.
-        onChangeSchool={
-          schoolScoped && school && activeTab
-            ? () => setTabSchool(activeTab.id, null)
-            : undefined
-        }
-        // Quick switch straight from the institution mark, without a trip
-        // back to the selection page.
-        schools={schoolScoped && school ? ADMIN_SCHOOLS : []}
+        // Quick school switching straight from the institution mark, scoped to
+        // the schools this service covers.
+        schools={school ? schools : []}
         currentSchoolId={school?.id}
         onSelectSchool={
-          schoolScoped && school && activeTab
+          school && activeTab
             ? (picked) => setTabSchool(activeTab.id, picked.id)
             : undefined
+        }
+        // A side trip rather than a service, so it opens its own tab and
+        // leaves the work behind it intact. Deduped, so it never opens twice.
+        onPlatformSettings={() =>
+          openTab({
+            kind: "platformSettings",
+            title: "Settings",
+            dedupeKey: "platformSettings",
+          })
         }
         onLogout={handleLogout}
       />
@@ -193,6 +188,7 @@ export default function Wrapper({
                 </div>
                 <div className="wrap__actions">
                   {actions}
+                  <ServiceSwitcher />
                   <IconButton
                     icon={expandedView ? Minimize : Maximize}
                     variant="secondary"

@@ -8,19 +8,20 @@ const nextId = () => `tab-${++counter}`;
 /**
  * BrowserProvider — owns the simulated browser's tab state.
  *
- * It also holds the expanded/collapsed display preference. That lives here, not
- * in a page, so it behaves like a saved setting: toggle it once and every page
- * in every tab follows.
+ * It also holds two things that behave like saved settings rather than page
+ * state: the expanded/collapsed display preference, and the `session` (the
+ * shape of the signed-in account). Both live here so every page in every tab
+ * agrees about them.
  *
  * openTab dedupes on `dedupeKey`: if a tab with the same key already exists it
- * is focused instead of duplicated (matching the "open a new tab only if one
- * isn't already open for that service" behavior). Otherwise a new tab opens
- * and becomes active.
+ * is focused instead of duplicated. navigateTab is the opposite move — it
+ * replaces what a tab is pointing at, in place, which is how the services
+ * switcher works. Switching services is traversal within one window, not a
+ * reason to accumulate tabs.
  */
 export function BrowserProvider({
   initialTabs = [],
-  multiSchool = false,
-  singleAccount = false,
+  session = {},
   children,
 }) {
   const [tabs, setTabs] = useState(() =>
@@ -61,6 +62,24 @@ export function BrowserProvider({
     });
   }, []);
 
+  /**
+   * Point an existing tab at something else, keeping its position in the strip.
+   * If another tab is already showing the destination, focus that one instead —
+   * otherwise switching services could leave two tabs on the same service and
+   * break openTab's dedupe.
+   */
+  const navigateTab = useCallback((id, next) => {
+    setTabs((prev) => {
+      const twin = prev.find((t) => t.id !== id && t.dedupeKey === next.dedupeKey);
+      if (twin) {
+        setActiveId(twin.id);
+        return prev;
+      }
+      setActiveId(id);
+      return prev.map((t) => (t.id === id ? { id, ...next } : t));
+    });
+  }, []);
+
   const closeTab = useCallback((id) => {
     setTabs((prev) => {
       const idx = prev.findIndex((t) => t.id === id);
@@ -92,10 +111,11 @@ export function BrowserProvider({
     tabs,
     activeId,
     activeTab: tabs.find((t) => t.id === activeId) ?? null,
-    multiSchool,
-    singleAccount,
+    session,
+    multiSchool: session.multiSchool !== false,
     setTabSchool,
     openTab,
+    navigateTab,
     closeTab,
     focusTab,
     expandedView,

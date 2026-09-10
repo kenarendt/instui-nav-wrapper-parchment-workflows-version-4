@@ -35,24 +35,41 @@ Notes on the file:// approach:
 ## The flow
 
 1. Sign in — enter any email and password, pick a product, and log in.
-2. The demo account carries both a Learner and an Admin experience. When both exist, sign-in lands on the Admin experience.
-3. Each experience opens on a welcome-mat dashboard whose modules deep-link into detailed experiences.
-   - Platform Services (admin) — greets the admin, then lays every service out in one card grid: Transcript Services, Diploma Services, Dual Enrollment, and Receive. Each card's Open button launches that service in a new browser tab. The kebab holds "Set your preferences", which would let an admin skip this screen and land straight inside a service.
-   - Learner Connect — account rollup, course work, credentials, and digital badges. Deep-links open the detailed Learner Dashboard in a new tab.
-4. An admin who administers several schools picks one before a service dashboard can show anything, on a school selection page inside that service's tab. It has no global nav, since every nav item is scoped to a school that hasn't been chosen; a top bar carries a way back and the account instead.
-5. All admin service dashboards share one common dashboard pattern.
-6. Inside a service, the institution mark in the nav rail switches schools in one click. The account menu carries "Platform Services" to return to the hub, and "Change schools" to go back to the full selection page.
+2. Sign-in drops you straight into a service. There is no hub screen and no
+   school selection screen in between. Landing resolves in three steps:
+   - Admin access beats learner access, so an account carrying both opens on an
+     admin service.
+   - The default service decides which one. Transcript Services for now.
+   - That service's default school decides which school you act for.
+   An account with learner access only opens on My Credentials.
+3. Everything after that is traversal from inside a service, using two controls
+   in the chrome:
+   - **Services switcher** — the grid button in the page top-right, between
+     Customize Dashboard and expand/collapse. It lists every service the account
+     reaches, marks the one you are in, and puts My Credentials under its own
+     "My experience" heading. It switches the current tab in place rather than
+     opening a new one, and hides itself when the account has only one
+     destination.
+   - **School switcher** — the institution mark at the top of the nav rail, as
+     before. Schools hang off the service, not the account, so it only offers the
+     schools attached to the service on screen, and it disappears in a service
+     that covers one school.
+4. All admin service dashboards share one common dashboard pattern.
+5. Platform Settings sits in the nav account menu, under Account Settings. It
+   opens in its own tab, since it is a side trip rather than a service.
 
-## Structure
+The prototype panel under the login card varies the shape of the account —
+admin plus learner, admin only, learner only, whether the admin covers several
+schools, and whether they reach one service or four. That is what decides where
+you land and which of the two switchers appear, so it is what a demo needs to
+change.
 
-- `src/theme/tokens.css` — design tokens extracted verbatim from Figma.
-- `src/browser/` — the simulated browser: tab state (`BrowserContext`), Chrome-style frame (`BrowserFrame`), and the page registry mapping tab kinds to pages.
-- `src/components/Wrapper.jsx` — the Desktop Wrapper (beta) page shell: GlobalNav + content + optional trailing content area.
-- `src/components/GlobalNav.jsx` — collapsible nav rail, the account panel, and the school switcher on the institution mark.
-- `src/components/` — InstUI-aligned primitives (Button, IconButton, TextInput, Select, Tabs, Card) and reusable `blocks/` (Panel, ServiceCard, ServiceGraphic, StatTile, LineChart, DonutChart, AINote).
-- `src/screens/` — SignIn, AdminHub (the Platform Services screen), LearnerHub, SchoolSelect, ServiceDashboard (shared), LearnerDashboard.
-- `src/hooks/useDismissOnOutside.js` — one copy of the Escape / outside-press dismissal every transient menu uses.
-- `src/data/experiences.js` — account, experiences, and service definitions.
+## Defaults live in one place
+
+`PREFERENCES` in `src/data/experiences.js` holds the default service and the
+default school per service. A flat architecture needs both: without them there
+is nothing to land on. In production these would be user settings, which is why
+Platform Settings is the menu item that sits closest to them.
 
 ## Fidelity notes
 

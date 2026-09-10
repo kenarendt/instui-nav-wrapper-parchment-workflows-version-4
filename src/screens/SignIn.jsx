@@ -13,20 +13,49 @@ import "./SignIn.css";
  *
  * The background photo asset lives on the Figma localhost server and can't be
  * bundled here, so a brand-blue gradient stands in for it.
+ *
+ * The prototype panel under the card varies the shape of the account rather
+ * than the destination. Version 4 resolves the destination itself — admin
+ * access beats learner access, the default service and its default school do
+ * the rest — so there is no landing to pick. What is worth varying is what the
+ * account can reach, because that decides whether the services switcher and
+ * the school switcher appear at all.
  */
+const ACCOUNT_SHAPES = [
+  { id: "both", label: "Admin + Learner" },
+  { id: "adminOnly", label: "Admin only" },
+  { id: "learnerOnly", label: "Learner only" },
+];
+
+// Say out loud where the current settings land, so the panel explains itself
+// rather than needing the rules held in someone's head.
+function describeLanding(shape, singleService) {
+  if (shape === "learnerOnly") {
+    return "Lands on My Credentials. No services switcher.";
+  }
+  const services = singleService ? "one service" : "four services";
+  const switcher =
+    singleService && shape === "adminOnly"
+      ? "No services switcher."
+      : "Services switcher available.";
+  return `Lands on Transcript Services, ${services}. ${switcher}`;
+}
+
 export default function SignIn({ onSignIn }) {
   const [product, setProduct] = useState("parchment");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [landing, setLanding] = useState("admin");
-  const [multiSchool, setMultiSchool] = useState(false);
-  // On = this email carries one account only, so there is nothing to switch
-  // between and no Connect screen to land on.
-  const [singleAccount, setSingleAccount] = useState(false);
+  // What the account carries. This is what decides where sign-in lands and
+  // which chrome controls exist, so it is what a demo needs to vary.
+  const [shape, setShape] = useState("both");
+  const [multiSchool, setMultiSchool] = useState(true);
+  // On = this admin reaches one service only, so the services switcher has
+  // nothing to offer and hides itself.
+  const [singleService, setSingleService] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSignIn?.({ product, email, password, landing, multiSchool, singleAccount });
+    onSignIn?.({ product, email, password, shape, multiSchool, singleService });
   };
 
   return (
@@ -95,25 +124,20 @@ export default function SignIn({ onSignIn }) {
           </div>
         </form>
 
-        <div className="signin__demo" role="group" aria-label="Prototype: landing destination">
-          <span className="signin__demo-label">Prototype · Land on</span>
+        <div className="signin__demo" role="group" aria-label="Prototype: account shape">
+          <span className="signin__demo-label">Prototype · This account carries</span>
           <div className="signin__seg">
-            <button
-              type="button"
-              className={`signin__seg-btn${landing === "admin" ? " signin__seg-btn--active" : ""}`}
-              aria-pressed={landing === "admin"}
-              onClick={() => setLanding("admin")}
-            >
-              Platform Services
-            </button>
-            <button
-              type="button"
-              className={`signin__seg-btn${landing === "learner" ? " signin__seg-btn--active" : ""}`}
-              aria-pressed={landing === "learner"}
-              onClick={() => setLanding("learner")}
-            >
-              Learner Connect
-            </button>
+            {ACCOUNT_SHAPES.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                className={`signin__seg-btn${shape === s.id ? " signin__seg-btn--active" : ""}`}
+                aria-pressed={shape === s.id}
+                onClick={() => setShape(s.id)}
+              >
+                {s.label}
+              </button>
+            ))}
           </div>
 
           <div className="signin__opt">
@@ -122,19 +146,21 @@ export default function SignIn({ onSignIn }) {
             </span>
             <Toggle
               label="Admin supports multiple schools"
-              defaultOn={false}
+              defaultOn
               onChange={setMultiSchool}
             />
           </div>
 
           <div className="signin__opt">
-            <span className="signin__opt-label">Multi-account simulation off</span>
+            <span className="signin__opt-label">Admin has one service only</span>
             <Toggle
-              label="Multi-account simulation off"
+              label="Admin has one service only"
               defaultOn={false}
-              onChange={setSingleAccount}
+              onChange={setSingleService}
             />
           </div>
+
+          <p className="signin__demo-note">{describeLanding(shape, singleService)}</p>
         </div>
       </div>
     </div>

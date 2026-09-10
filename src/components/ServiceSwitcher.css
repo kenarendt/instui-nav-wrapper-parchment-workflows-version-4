@@ -1,0 +1,107 @@
+/* Anchor for the popout. The trigger keeps the shared .icon-btn box so it lines
+   up with the expand/collapse control beside it. */
+.svcsw {
+  position: relative;
+  display: inline-flex;
+}
+
+.svcsw__trigger--open {
+  background: var(--button-secondary-bg);
+  border-color: var(--focus-outline-color);
+}
+
+.svcsw__menu {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  right: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  padding: var(--space-sm);
+  background: var(--background-containercolor);
+  border: var(--nav-border-width) solid var(--nav-border-color);
+  border-radius: var(--radius-nav-minimized);
+  box-shadow: 0 12px 32px rgba(15, 23, 33, 0.18);
+}
+
+.svcsw__list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.svcsw__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: var(--radius-navitem);
+  background: transparent;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textbase);
+  color: var(--heading-basecolor);
+  text-align: left;
+  cursor: pointer;
+}
+
+.svcsw__item:hover {
+  background: #eef1f8;
+}
+
+.svcsw__item:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: -2px;
+}
+
+/* The service you are in stays listed rather than being hidden, so the menu
+   doubles as a statement of where you are. Weight carries that, not colour
+   alone. */
+.svcsw__item--selected {
+  font-weight: var(--fontweight-body-strong);
+  cursor: default;
+}
+
+.svcsw__item--selected:hover {
+  background: transparent;
+}
+
+.svcsw__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: var(--icon-sidenav-color);
+}
+
+.svcsw__item-name {
+  min-width: 0;
+  flex: 1;
+}
+
+.svcsw__item-check {
+  flex-shrink: 0;
+  color: var(--heading-basecolor);
+}
+
+.svcsw__group {
+  margin-top: var(--space-xs);
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--nav-border-color);
+}
+
+.svcsw__group-label {
+  margin: 0;
+  padding: var(--space-xs) var(--space-md);
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  font-weight: var(--fontweight-body-strong);
+  color: var(--text-mutedcolor);
+}

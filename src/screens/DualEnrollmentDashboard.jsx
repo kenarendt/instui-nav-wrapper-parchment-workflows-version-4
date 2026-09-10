@@ -64,7 +64,7 @@ export default function DualEnrollmentDashboard() {
         productLogo: "parchment",
       }}
       experienceType="admin"
-      schoolScope="Dual Enrollment"
+      serviceId="dualEnrollment"
       title="Dual Enrollment Dashboard"
       actions={
         <>

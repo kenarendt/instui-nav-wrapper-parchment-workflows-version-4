@@ -54,7 +54,7 @@ export default function ReceiveDashboard() {
         productLogo: "parchment",
       }}
       experienceType="admin"
-      schoolScope="Receive"
+      serviceId="receive"
       title="Receive Dashboard"
       actions={
         <>

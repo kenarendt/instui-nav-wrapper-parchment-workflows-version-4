@@ -102,7 +102,7 @@ export default function ServiceDashboard({ serviceId }) {
         productLogo: "parchment",
       }}
       experienceType="admin"
-      schoolScope={service.name}
+      serviceId={serviceId}
       title={`${service.name} Dashboard`}
       actions={
         <>
