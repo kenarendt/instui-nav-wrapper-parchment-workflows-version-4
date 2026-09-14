@@ -1,0 +1,81 @@
+.schoolband {
+  /* Fallback keeps the rule visible if a school has set no colour. */
+  --school-brand: var(--heading-basecolor);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg, 24px);
+}
+
+.schoolband__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* The crest is the fastest way to recognise a school, so it gets room: a 64px
+   tile with the artwork nearly filling it, not a small mark floating in a box. */
+.schoolband__crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: var(--radius-navitem);
+  background: var(--background-containercolor);
+  border: 1px solid var(--nav-border-color);
+}
+
+.schoolband__id {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.schoolband__name {
+  margin: 0;
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  /* 28px: above a panel title (24px), below the page title (40px). The
+     research complaint was that this was too easy to miss, so it outranks the
+     panels it sits over without competing with the page heading. */
+  font-size: var(--fontsize-textxl);
+  line-height: 1.2;
+  color: var(--heading-basecolor);
+}
+
+.schoolband__meta {
+  margin: 0;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textbase);
+  line-height: 1.4;
+  color: var(--text-mutedcolor);
+}
+
+/* Anchor for the popout, which positions itself against this box. */
+.schoolband__switch {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.schoolband__rule {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--school-brand);
+}
+
+/* Narrow: the switcher drops under the identity rather than squeezing the
+   school name into two or three words per line. */
+@media (max-width: 640px) {
+  .schoolband__row {
+    flex-wrap: wrap;
+  }
+
+  .schoolband__switch {
+    order: 3;
+  }
+}

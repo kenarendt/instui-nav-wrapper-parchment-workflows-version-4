@@ -49,6 +49,14 @@ export const account = {
  * Schools an admin can administer. Which of these a given service offers is
  * set per service below. Fictional institutions — `crest` picks the
  * SchoolCrest artwork.
+ *
+ * `brandColor` is the school's own primary colour, which a school sets for
+ * itself in production. It reaches the UI as a CSS custom property rather than
+ * a hard-coded fill, so decorative elements can opt into it wherever it helps
+ * identify the school. Today that is the rule under the school band; anything
+ * else that wants it reads the same property. Keep these dark enough to sit on
+ * a white panel, and treat them as decoration — nothing should depend on the
+ * colour alone to be understood, since a school can set it to anything.
  */
 export const ADMIN_SCHOOLS = [
   {
@@ -56,6 +64,8 @@ export const ADMIN_SCHOOLS = [
     name: "Bambusa University",
     crest: "bambusa",
     location: "Denver, Colorado",
+    country: "United States",
+    brandColor: "#1d354f",
     detail: "4-year private · 18,400 learners",
   },
   {
@@ -63,6 +73,8 @@ export const ADMIN_SCHOOLS = [
     name: "Panda High School",
     crest: "panda",
     location: "Portland, Oregon",
+    country: "United States",
+    brandColor: "#1f6b4f",
     detail: "Secondary · 1,260 learners",
   },
   {
@@ -70,6 +82,8 @@ export const ADMIN_SCHOOLS = [
     name: "Meridian Community College",
     crest: "meridian",
     location: "Tempe, Arizona",
+    country: "United States",
+    brandColor: "#0f7b74",
     detail: "2-year public · 9,750 learners",
   },
   {
@@ -77,6 +91,8 @@ export const ADMIN_SCHOOLS = [
     name: "Mount Elbert University",
     crest: "elbert",
     location: "Leadville, Colorado",
+    country: "United States",
+    brandColor: "#7d2340",
     detail: "4-year public · 22,100 learners",
   },
 ];

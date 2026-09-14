@@ -1,0 +1,89 @@
+/* Shared popout for switching school. Anchored by its `--rail` / `--below`
+   modifier; every consumer gives its own wrapper `position: relative`. */
+.schoolmenu {
+  position: absolute;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: 288px;
+  padding: var(--space-sm);
+  background: var(--nav-bg);
+  border: var(--nav-border-width) solid var(--nav-border-color);
+  border-radius: var(--radius-nav-minimized);
+  box-shadow: 0 12px 32px rgba(15, 23, 33, 0.18);
+}
+
+/* Beside the nav rail, level with the institution mark. */
+.schoolmenu--rail {
+  top: var(--nav-minimized-margin);
+  left: calc(100% - 4px);
+}
+
+/* Under its trigger, right edges aligned. */
+.schoolmenu--below {
+  top: calc(100% + var(--space-xs));
+  right: 0;
+}
+
+.schoolmenu__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-md);
+  margin-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--nav-border-color);
+}
+
+.schoolmenu__label {
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  color: var(--text-mutedcolor);
+}
+
+.schoolmenu__current {
+  font-family: var(--fontfamily-base);
+  font-weight: var(--fontweight-body-strong);
+  font-size: var(--fontsize-textbase);
+  color: var(--heading-basecolor);
+}
+
+.schoolmenu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: var(--radius-navitem);
+  background: transparent;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textbase);
+  color: var(--heading-basecolor);
+  text-align: left;
+  cursor: pointer;
+}
+
+.schoolmenu__item:hover {
+  background: #eef1f8;
+}
+
+.schoolmenu__item:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: -2px;
+}
+
+.schoolmenu__crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.schoolmenu__name {
+  min-width: 0;
+  flex: 1;
+  line-height: 1.3;
+}

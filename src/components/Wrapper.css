@@ -59,8 +59,14 @@
   width: 100%;
 }
 
+/* Wraps rather than squeezing. The title column had `flex-shrink: 0` against a
+   fixed-width actions group, so on a narrow window the remaining space shrank
+   to a few pixels and `word-break` stacked the page title one letter per line.
+   Giving the title a real basis and letting the row wrap moves the actions to
+   their own line instead. */
 .wrap__header-row {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-md);
   align-items: flex-start;
   width: 100%;
@@ -68,7 +74,7 @@
 
 .wrap__page-info {
   display: flex;
-  flex: 1 0 0;
+  flex: 1 1 240px;
   flex-direction: column;
   gap: var(--space-md);
   min-width: 0;
@@ -106,6 +112,7 @@
 
 .wrap__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--gap-buttons);
   align-items: center;
   flex-shrink: 0;

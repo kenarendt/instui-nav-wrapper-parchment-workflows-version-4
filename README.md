@@ -50,12 +50,19 @@ Notes on the file:// approach:
      "My experience" heading. It switches the current tab in place rather than
      opening a new one, and hides itself when the account has only one
      destination.
-   - **School switcher** — the institution mark at the top of the nav rail, as
-     before. Schools hang off the service, not the account, so it only offers the
-     schools attached to the service on screen, and it disappears in a service
-     that covers one school.
-4. All admin service dashboards share one common dashboard pattern.
-5. Platform Settings sits in the nav account menu, under Account Settings. It
+   - **School switcher** — two triggers, one menu. The institution mark at the
+     top of the nav rail, and the chevron on the school band above the
+     dashboard. Schools hang off the service, not the account, so the menu only
+     offers the schools attached to the service on screen, and both triggers
+     disappear in a service that covers one school.
+4. Admin dashboards open with a **school band**: crest, school name at heading
+   size, location, and a rule in the school's own primary colour. Research found
+   that admins could not easily tell whose work they were looking at, so the
+   school is stated at the top of the work rather than only in the chrome. The
+   band renders from `Wrapper`, so every admin service gets the same one in the
+   same place and a new service gets it for free.
+5. All admin service dashboards share one common dashboard pattern.
+6. Platform Settings sits in the nav account menu, under Account Settings. It
    opens in its own tab, since it is a side trip rather than a service.
 
 The prototype panel under the login card varies the shape of the account —
@@ -63,6 +70,16 @@ admin plus learner, admin only, learner only, whether the admin covers several
 schools, and whether they reach one service or four. That is what decides where
 you land and which of the two switchers appear, so it is what a demo needs to
 change.
+
+## School branding
+
+Each school carries a `brandColor` in `src/data/experiences.js`. The band sets
+it as the `--school-brand` custom property, and the rule reads that property
+rather than a hard-coded fill, so any other decorative element that should
+carry the school's colour can read the same one. Treat it as decoration only: a
+school sets this itself and can pick anything, so nothing relies on the colour
+to be understood. The crest, the name and the location all identify the school
+without it.
 
 ## Defaults live in one place
 

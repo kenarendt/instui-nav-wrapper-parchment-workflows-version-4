@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import CanvasLogo from "./CanvasLogo.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
+import SchoolMenu from "./SchoolMenu.jsx";
 import Toggle from "./Toggle.jsx";
 import useDismissOnOutside from "../hooks/useDismissOnOutside.js";
 import { account } from "../data/experiences.js";
@@ -159,35 +160,17 @@ export default function GlobalNav({
               )}
             </button>
             {schoolOpen && (
-              <div
-                ref={schoolMenuRef}
-                className="gnav__schoolmenu"
-                role="menu"
-                aria-label="Switch school"
-              >
-                <div className="gnav__schoolmenu-head">
-                  <span className="gnav__schoolmenu-label">Current school</span>
-                  <span className="gnav__schoolmenu-current">
-                    {institutionName}
-                  </span>
-                </div>
-                {otherSchools.map((s) => (
-                  <button
-                    key={s.id}
-                    role="menuitem"
-                    className="gnav__schoolmenu-item"
-                    onClick={() => {
-                      onSelectSchool(s);
-                      setSchoolOpen(false);
-                    }}
-                  >
-                    <span className="gnav__schoolmenu-crest" aria-hidden="true">
-                      <SchoolCrest size={28} variant={s.crest} />
-                    </span>
-                    <span className="gnav__schoolmenu-name">{s.name}</span>
-                  </button>
-                ))}
-              </div>
+              <SchoolMenu
+                menuRef={schoolMenuRef}
+                placement="rail"
+                schools={schools}
+                currentSchoolId={currentSchoolId}
+                currentName={institutionName}
+                onSelect={(s) => {
+                  onSelectSchool(s);
+                  setSchoolOpen(false);
+                }}
+              />
             )}
           </>
         ) : (

@@ -2,6 +2,7 @@ import { Maximize, Minimize } from "lucide-react";
 import GlobalNav from "./GlobalNav.jsx";
 import IconButton from "./IconButton.jsx";
 import ServiceSwitcher from "./ServiceSwitcher.jsx";
+import SchoolBand from "./blocks/SchoolBand.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
 import { useBrowser } from "../browser/BrowserContext.jsx";
 import {
@@ -37,9 +38,21 @@ import "./Wrapper.css";
  * can cover four schools in Transcript Services and one in Receive, and the
  * switcher disappears in the second case because there is nothing to switch to.
  *
- * Admin pages name the school they act on behalf of under the page title and
- * carry that school's crest in the nav. A page that is not scoped to one school
- * (Platform Settings) says so instead of naming one.
+ * An admin service page states the school at the top of the work itself, in the
+ * school band above the first panel, rather than as a line under the page
+ * title. Research found the line too easy to miss; the band carries the crest,
+ * the name at heading size, the location and the school's own colour. Because
+ * it renders here rather than in each dashboard, every admin service gets the
+ * same one in the same place, and a new service gets it for free.
+ *
+ * It sits above the whole body, not inside the main column, so its rule spans
+ * the full content width. The school scopes everything on the page, including
+ * the trailing rail, and a rule that stopped short of it would say otherwise.
+ *
+ * The line under the page title survives only where there is no band — Platform
+ * Settings, which spans every school rather than naming one. Running both would
+ * mean saying the same thing twice, 40px apart, which is how people learn to
+ * read neither.
  *
  * Learner pages follow the same rule for the nav mark. Pass `showSchoolSummary`
  * to also state how many schools are connected under the page title.
@@ -90,12 +103,12 @@ export default function Wrapper({
     ? schoolById(activeTab?.params?.schoolId) ?? schools[0]
     : undefined;
 
-  // What the header and nav say about school context.
+  // What the header and nav say about school context. A page showing the band
+  // says nothing under its title — the band has already said it, louder.
   let schoolLine = null;
   let schoolIdentity = null;
   if (experienceType === "admin") {
     if (school) {
-      schoolLine = school.name;
       schoolIdentity = {
         institutionName: school.name,
         logo: <SchoolCrest size={40} variant={school.crest} />,
@@ -200,6 +213,18 @@ export default function Wrapper({
               </div>
               {tabs && <div className="wrap__tabs">{tabs}</div>}
             </div>
+          )}
+
+          {school && (
+            <SchoolBand
+              school={school}
+              schools={schools}
+              onSelectSchool={
+                activeTab
+                  ? (picked) => setTabSchool(activeTab.id, picked.id)
+                  : undefined
+              }
+            />
           )}
 
           <div className={`wrap__body${trailing ? " wrap__body--split" : ""}`}>
