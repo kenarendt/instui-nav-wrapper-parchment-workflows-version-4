@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronLeft, Globe, CircleHelp, User, Users, Check, SquarePen, Eye } from "lucide-react";
-import SchoolCrest from "../components/SchoolCrest.jsx";
+import SchoolBand from "../components/blocks/SchoolBand.jsx";
 import TextInput from "../components/TextInput.jsx";
 import Select from "../components/Select.jsx";
 import Button from "../components/Button.jsx";
@@ -15,10 +15,11 @@ import "./Register.css";
  * and a footer. Sign-in reaches it when the email check finds no account, so
  * the user never has to notice they are new and pick the right link.
  *
- * Registration happens through a school, which is why the school heads the card
- * with its crest, address, and a rule in its own colour — the same band idea as
- * the dashboards, in the place a learner first meets it. That school becomes
- * the one school the new account is connected to.
+ * Registration happens through a school, so the school heads the card using the
+ * very same `SchoolBand` the dashboards use — crest, name, address, and a rule
+ * in the school's own colour. Not a lookalike built here: a learner meets this
+ * screen before anything else, and the first time they see that band should
+ * teach them what it means everywhere after.
  *
  * "Whose credentials are you ordering?" is carried over from the reference
  * design. The prototype has no ordering flow behind it, so it behaves like
@@ -128,22 +129,9 @@ export default function Register({ email, onBack, onRegistered }) {
         <form className="reg__card" onSubmit={submit}>
           <h1 className="reg__cardhead">Learner Account</h1>
 
-          {/* The school's own colour, the same treatment the dashboards use. */}
-          <div
-            className="reg__rule"
-            style={{ "--school-brand": school.brandColor }}
-            aria-hidden="true"
-          />
-
-          <section className="reg__school" aria-label="Registering with">
-            <span className="reg__school-crest" aria-hidden="true">
-              <SchoolCrest size={64} variant={school.crest} />
-            </span>
-            <span className="reg__school-id">
-              <span className="reg__school-name">{school.name}</span>
-              <span className="reg__school-addr">{school.location}</span>
-            </span>
-          </section>
+          <div className="reg__band">
+            <SchoolBand school={school} />
+          </div>
 
           <section className="reg__whose">
             <h2 className="reg__whose-q">Whose credentials are you ordering?</h2>

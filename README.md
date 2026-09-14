@@ -96,6 +96,12 @@ in the menu.
 Only a Parchment learner account can be created. An admin gets their access from
 the institution, not from a signup form.
 
+The school heads the card using the same `SchoolBand` the dashboards use, not a
+lookalike built for this page. A learner meets this screen before anything else,
+so the first time they see that band should teach them what it means everywhere
+after. The form sits on white, so the card reads as one surface and the section
+rules carry the structure.
+
 Two deliberate departures from the reference screen: field labels sit above
 their inputs rather than inside them, matching the rest of the prototype and
 keeping the label visible once typing starts; and the required-fields note reads
@@ -130,5 +136,10 @@ is nothing to land on. In production these would be user settings, which is why
 Platform Settings is the menu item that sits closest to them.
 
 ## Fidelity notes
+
+The Canvas and Mastery product marks are traced from the InstUI component
+library (nodes 2280-7060 and 2280-7137) and live in `components/CanvasLogo.jsx`
+and `components/MasteryLogo.jsx`. The Parchment mark is still a placeholder;
+swap it when the real artwork is to hand.
 
 The design references InstUI v2 / beta components and the 2026 token set (Inclusive Sans + Atkinson Hyperlegible Next), which aren't on public npm, so components are hand-built to match the Figma tokens. Photo and logo assets live on Figma's local asset server, so brand-blue gradients and simple marks stand in for them. Charts are lightweight inline SVG. Content on the hubs and dashboards is representative of the reference screens.

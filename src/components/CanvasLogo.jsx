@@ -1,22 +1,45 @@
+import { useId } from "react";
+
 /**
- * Canvas by Instructure product mark, redrawn as a simple ring of dots.
- * Placeholder for the product logo slot at the bottom of the nav rail.
+ * Canvas product mark, from the InstUI component library (node 2280-7060).
+ *
+ * Eight large dots sit on a circle of radius 31.5 and are cut by a circle of
+ * radius 32, so the ones on the axes read as half discs and the diagonal ones
+ * as lenses. Eight small dots ring the middle on radius 17.3. Traced from the
+ * source artwork rather than approximated, so it matches at any size.
+ *
+ * The clip needs an id, and this mark can appear more than once on a page, so
+ * the id comes from useId rather than a constant.
  */
 export default function CanvasLogo({ size = 24, color = "var(--icon-sidenav-color)" }) {
-  const dots = [];
-  const r = size / 2;
-  const orbit = r - 3;
-  const count = 8;
-  for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
-    const cx = r + orbit * Math.cos(angle);
-    const cy = r + orbit * Math.sin(angle);
-    dots.push(<circle key={i} cx={cx} cy={cy} r={1.6} fill={color} />);
-  }
+  const clipId = useId();
+  const ring = (radius, r) =>
+    Array.from({ length: 8 }, (_, k) => {
+      const a = ((k * 45 - 90) * Math.PI) / 180;
+      return (
+        <circle
+          key={k}
+          cx={(32 + radius * Math.cos(a)).toFixed(2)}
+          cy={(32 + radius * Math.sin(a)).toFixed(2)}
+          r={r}
+        />
+      );
+    });
+
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-label="Canvas">
-      {dots}
-      <circle cx={r} cy={r} r={2.2} fill={color} />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      fill={color}
+      role="img"
+      aria-label="Canvas"
+    >
+      <clipPath id={clipId}>
+        <circle cx="32" cy="32" r="32" />
+      </clipPath>
+      <g clipPath={`url(#${clipId})`}>{ring(31.5, 9)}</g>
+      {ring(17.3, 3)}
     </svg>
   );
 }

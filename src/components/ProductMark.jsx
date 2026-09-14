@@ -1,14 +1,13 @@
 import CanvasLogo from "./CanvasLogo.jsx";
+import MasteryLogo from "./MasteryLogo.jsx";
 
 /**
  * ProductMark — stand-in logos for the three products on the sign-in chooser.
  *
- * The real brand assets live on Figma's local asset server and can't be bundled
- * here, so these are original placeholder marks in the same spirit as the
- * parchment mark in the nav rail and `CanvasLogo`. They are deliberately simple
- * and not an attempt to reproduce the actual logos: anyone reading this
- * prototype should be able to tell at a glance that the artwork is a
- * placeholder, not a brand asset to copy.
+ * Canvas and Mastery use the real marks from the InstUI component library,
+ * traced from the artwork Ken supplied. Parchment is still a placeholder in the
+ * same spirit as the mark in the nav rail, since that one has not been handed
+ * over yet — worth swapping when it is, so all three are the genuine article.
  */
 export default function ProductMark({ product, size = 40 }) {
   const box = {
@@ -23,22 +22,16 @@ export default function ProductMark({ product, size = 40 }) {
 
   if (product === "canvas") {
     return (
-      <span style={{ ...box, background: "#e3edf9" }} aria-hidden="true">
+      <span style={{ ...box, background: "#e3edf9" }}>
         <CanvasLogo size={size * 0.62} color="#1d354f" />
       </span>
     );
   }
 
   if (product === "mastery") {
-    // Three rising bars, for progress against a standard.
-    const s = size * 0.62;
     return (
-      <span style={{ ...box, background: "#e3edf9" }} aria-hidden="true">
-        <svg width={s} height={s} viewBox="0 0 24 24" fill="#1d354f">
-          <rect x="3" y="14" width="5" height="7" rx="1.5" />
-          <rect x="9.5" y="9" width="5" height="12" rx="1.5" />
-          <rect x="16" y="3" width="5" height="18" rx="1.5" />
-        </svg>
+      <span style={{ ...box, background: "#e3edf9" }}>
+        <MasteryLogo size={size * 0.62} color="#1d354f" />
       </span>
     );
   }
