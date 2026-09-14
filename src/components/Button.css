@@ -42,3 +42,13 @@
   border-color: #c7cdd4;
   color: var(--button-secondary-color);
 }
+
+/* A submit waiting on required fields. Greyed rather than hidden, so the user
+   can see the end of the form exists before they have earned it. */
+.btn:disabled {
+  background: #d2d6db;
+  border-color: #d2d6db;
+  color: #6a7883;
+  cursor: not-allowed;
+  filter: none;
+}

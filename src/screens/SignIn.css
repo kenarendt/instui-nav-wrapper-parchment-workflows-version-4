@@ -31,6 +31,12 @@
   padding-top: 175px;
 }
 
+/* Only the product step needs the extra room; every other step keeps the
+   narrow card the design specifies. */
+.signin__content--wide {
+  width: 720px;
+}
+
 .signin__brand {
   display: flex;
   align-items: center;
@@ -140,11 +146,15 @@
   opacity: 0.9;
 }
 
+/* Five rows now, so each spans the panel with the label left and the control
+   right. Centred rows of differing label lengths made a ragged column. */
 .signin__opt {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-md);
-  margin-top: var(--space-sm);
+  width: 100%;
+  margin-top: var(--space-xs);
 }
 
 .signin__opt-label {
@@ -155,7 +165,9 @@
 }
 
 .signin__seg {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
+  justify-content: center;
   padding: 3px;
   background: rgba(0, 0, 0, 0.25);
   border-radius: 999px;
@@ -193,4 +205,118 @@
   text-align: center;
   color: var(--text-baseoncolor);
   opacity: 0.85;
+}
+
+/* ---------- Product chooser ---------- */
+.signin__products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.signin__product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-lg) var(--space-md);
+  border: 1px solid var(--nav-border-color);
+  border-radius: var(--radius-container-lg);
+  background: var(--background-containercolor);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.signin__product:hover {
+  border-color: var(--focus-outline-color);
+  box-shadow: var(--shadow-elevation1);
+}
+
+.signin__product:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+.signin__product-name {
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: var(--fontsize-textlg);
+  line-height: 1.25;
+  color: var(--heading-basecolor);
+}
+
+.signin__product-desc {
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  line-height: 1.45;
+  color: var(--text-mutedcolor);
+}
+
+/* ---------- Password step ---------- */
+.signin__forgot {
+  margin: 0;
+  width: 100%;
+}
+
+/* A quiet way back to the first step, on any step past it. */
+.signin__back {
+  border: none;
+  background: transparent;
+  padding: var(--space-xs);
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textbase);
+  font-weight: var(--fontweight-body-strong);
+  color: var(--text-link-color);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.signin__back:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+/* ---------- Prototype panel ---------- */
+.signin__seg-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.signin__check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  font-weight: var(--fontweight-body-strong);
+  color: var(--text-baseoncolor);
+  cursor: pointer;
+}
+
+.signin__check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--button-primary-bg);
+  cursor: pointer;
+}
+
+/* The boundary page reuses the sign-in surface, centred rather than stacked. */
+.signin__card--boundary {
+  align-items: center;
+  text-align: center;
+  gap: var(--space-lg);
+}
+
+.signin__card--boundary .btn {
+  width: 100%;
 }

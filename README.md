@@ -34,7 +34,17 @@ Notes on the file:// approach:
 
 ## The flow
 
-1. Sign in — enter any email and password, pick a product, and log in.
+1. Sign in — an email address first, then whatever that address turns out to
+   need:
+   - **Email, then Continue.** The account is looked up rather than declared, so
+     there is no product picker and no "Don't have an account?" link here.
+   - **Which product**, only when the account reaches more than one of
+     Parchment, Mastery, and Canvas. One product and this step never appears.
+   - **The password** for the product they picked, with a Forgot password link.
+   An address with no account goes to registration instead, so being new stops
+   being something the user has to notice and self-select. Signing in to Mastery
+   or Canvas reaches a page that says plainly this prototype covers Parchment,
+   rather than a hollow imitation of a product we have not built.
 2. Sign-in drops you straight into a service. There is no hub screen and no
    school selection screen in between. Landing resolves in three steps:
    - Admin access beats learner access, so an account carrying both opens on an
@@ -72,11 +82,33 @@ Notes on the file:// approach:
 7. Platform Settings sits in the nav account menu, under Account Settings. It
    opens in its own tab, since it is a side trip rather than a service.
 
-The prototype panel under the login card varies the shape of the account —
-admin plus learner, admin only, learner only, whether the admin covers several
-schools, and whether they reach one service or four. That is what decides where
-you land and which of the two switchers appear, so it is what a demo needs to
-change.
+## Registration
+
+An email with no account reaches `screens/Register.jsx`, a full page with its
+own chrome rather than another step in the sign-in card, matching the production
+design. Registration happens through a school, so the school heads the card with
+its crest, address, and a rule in its own colour — the same band idea as the
+dashboards, in the place a learner first meets it. That school becomes the one
+school the new account is connected to, so a fresh account lands on My
+Credentials showing it, with nothing to switch to and only "Add another school"
+in the menu.
+
+Only a Parchment learner account can be created. An admin gets their access from
+the institution, not from a signup form.
+
+Two deliberate departures from the reference screen: field labels sit above
+their inputs rather than inside them, matching the rest of the prototype and
+keeping the label visible once typing starts; and the required-fields note reads
+"asterisk", which the reference misspells.
+
+## The prototype panel
+
+It sits on the first sign-in step, since everything it varies is settled when
+the email is checked. It stands in for the account lookup: the shape of the
+Parchment account (admin plus learner, admin only, learner only), whether the
+admin covers several schools, whether they reach one service or four, whether
+the address also reaches Mastery or Canvas, and whether it has an account at
+all. A line underneath says in plain words what the current settings will do.
 
 ## School branding
 

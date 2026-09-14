@@ -15,6 +15,59 @@
  * identity on their own.
  */
 
+/**
+ * The school a brand-new learner registers through. Registration happens from a
+ * school's own page — the reference design registers through Apple Tree High
+ * School — so signing up connects the learner to exactly that school and no
+ * others. It is kept out of `SCHOOLS` so it only ever appears for an account
+ * that registered, not in the demo account's switcher.
+ */
+export const REGISTRATION_SCHOOL = {
+  id: "appletree",
+  name: "Apple Tree High School",
+  crest: "appletree",
+  location: "100 Main Street, Scottsdale, AZ 85093",
+  country: "United States",
+  brandColor: "#1f8a4c",
+  credentials: [
+    {
+      type: "Diploma",
+      title: "High School Diploma",
+      issuer: "Apple Tree High School",
+      date: "May 22, 2026",
+      thumb: "diploma",
+    },
+    {
+      type: "Transcript",
+      title: "Official Academic Transcript",
+      issuer: "Apple Tree High School",
+      date: "May 28, 2026",
+      thumb: "verification",
+    },
+  ],
+  badges: [
+    { title: "Perfect Attendance", issuer: "Apple Tree High School", date: "June 1, 2026" },
+  ],
+  insights: [
+    { value: "0", label: "Collections", hint: "Active credential collections" },
+    { value: "2", label: "Public credentials", hint: "Public credentials" },
+    { value: "0", label: "Public views & shares", hint: "Total credential views" },
+  ],
+  donut: {
+    total: "3",
+    segments: [
+      { label: "Diplomas", value: 34, color: "#0f7b74" },
+      { label: "Transcripts", value: 33, color: "#c54396" },
+      { label: "Badges", value: 33, color: "#273540" },
+    ],
+  },
+  orderPills: ["Transcripts", "Diplomas", "Verifications"],
+  directory: [
+    { name: "Marcus Webb", role: "Registrar", initials: "MW" },
+    { name: "Dana Ruiz", role: "Counselor", initials: "DR" },
+  ],
+};
+
 export const SCHOOLS = [
   {
     id: "bambusa",
@@ -132,6 +185,7 @@ export const OTHER_BADGES = [
 ];
 
 export function schoolById(id) {
+  if (id === REGISTRATION_SCHOOL.id) return REGISTRATION_SCHOOL;
   return SCHOOLS.find((s) => s.id === id);
 }
 

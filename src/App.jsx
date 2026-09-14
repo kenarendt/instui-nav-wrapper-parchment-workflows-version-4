@@ -1,31 +1,72 @@
 import { useState } from "react";
 import SignIn from "./screens/SignIn.jsx";
+import Register from "./screens/Register.jsx";
+import ProductBoundary from "./screens/ProductBoundary.jsx";
 import { BrowserProvider } from "./browser/BrowserContext.jsx";
 import BrowserFrame from "./browser/BrowserFrame.jsx";
 import { landingTab } from "./data/experiences.js";
+import { REGISTRATION_SCHOOL } from "./data/credentials.js";
 
 /**
  * App — top-level flow.
  *
- * Sign-in drops the user straight into a service. There is no hub screen and no
- * school selection screen to pass through: `landingTab` resolves the account
- * shape down to one destination, already scoped to a school, and that is the
- * first tab. Admin access wins over learner access, the default service decides
- * which admin service, and that service's default school decides the scope.
+ * Four states, in the order a person meets them:
+ *   1. Sign in. An email first, then the product if the account reaches more
+ *      than one, then the password.
+ *   2. Register, when the email check finds no account. Parchment learner only.
+ *   3. The boundary page, if they signed in to Mastery or Canvas, which this
+ *      prototype does not build.
+ *   4. The app itself, in the simulated browser.
  *
- * From there the simulated browser owns navigation. The services switcher in
- * the page top-right and the school switcher on the nav's institution mark both
- * move the current tab rather than opening new ones, so traversing the platform
- * stays inside one window.
+ * Sign-in resolves one destination and lands on it: admin access beats learner
+ * access, the default service decides which admin service, and that service's
+ * default school decides the scope. There is no hub screen and no school
+ * selection screen to pass through.
  *
- * The prototype panel on the sign-in screen varies the account shape, since
- * that is what now decides where a user lands and which controls appear.
+ * A newly registered learner is connected to the school they registered
+ * through, and to no others — registration happens on a school's page, so that
+ * is the school they have. Their session carries that one school, so the
+ * credentials dashboard shows it and the switcher offers only "Add another
+ * school".
  */
 export default function App() {
   const [session, setSession] = useState(null);
+  const [registering, setRegistering] = useState(null);
+
+  if (registering) {
+    return (
+      <Register
+        email={registering.email}
+        onBack={() => setRegistering(null)}
+        onRegistered={({ email, name }) => {
+          setSession({
+            email,
+            name,
+            product: "parchment",
+            shape: "learnerOnly",
+            newAccount: true,
+            // The one school a brand-new account has.
+            learnerSchools: [REGISTRATION_SCHOOL],
+          });
+          // Leave the registration state too, or this branch keeps rendering
+          // the form over the account it just created.
+          setRegistering(null);
+        }}
+      />
+    );
+  }
 
   if (!session) {
-    return <SignIn onSignIn={setSession} />;
+    return <SignIn onSignIn={setSession} onRegister={setRegistering} />;
+  }
+
+  if (session.product && session.product !== "parchment") {
+    return (
+      <ProductBoundary
+        product={session.product}
+        onBack={() => setSession(null)}
+      />
+    );
   }
 
   return (

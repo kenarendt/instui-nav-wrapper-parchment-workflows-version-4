@@ -27,13 +27,13 @@ import ShareModal from "../components/ShareModal.jsx";
 import CreateRecordFlow from "../components/CreateRecordFlow.jsx";
 import CredentialMark from "../components/CredentialMark.jsx";
 import { account } from "../data/experiences.js";
+import { useBrowser } from "../browser/BrowserContext.jsx";
 import { RECORDS } from "../data/records.js";
 import {
   SCHOOLS,
   OTHER_BADGES,
   allCredentials,
   ALL_DONUT,
-  schoolById,
 } from "../data/credentials.js";
 import "./ParchmentCredentials.css";
 
@@ -161,12 +161,18 @@ function SchoolView({ school }) {
 }
 
 export default function ParchmentCredentials() {
+  // Which schools this learner has connected. The demo account carries two; an
+  // account created through registration carries only the school it registered
+  // through, which is what `session.learnerSchools` holds when it is set.
+  const { session } = useBrowser();
+  const schools = session?.learnerSchools?.length ? session.learnerSchools : SCHOOLS;
+
   const [page, setPage] = useState("dashboard");
   const [openedRecord, setOpenedRecord] = useState(null);
   const [shareOpen, setShareOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [records, setRecords] = useState(RECORDS);
-  const [active, setActive] = useState("bambusa");
+  const [active, setActive] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
 
   const navItems = NAV_ITEMS.map((item) => ({
@@ -333,7 +339,7 @@ export default function ParchmentCredentials() {
 
   // The dashboard is always one school. Which one is this page's own state, so
   // it is handed to the shell as a schoolContext rather than derived there.
-  const activeSchool = schoolById(active) ?? SCHOOLS[0];
+  const activeSchool = schools.find((s) => s.id === active) ?? schools[0];
 
   const main = <SchoolView school={activeSchool} />;
 
@@ -414,7 +420,7 @@ export default function ParchmentCredentials() {
       // with that menu open is already deciding which school.
       schoolContext={{
         school: activeSchool,
-        schools: SCHOOLS,
+        schools,
         onSelect: (picked) => setActive(picked.id),
         onAdd: () => setAddOpen(true),
       }}

@@ -80,6 +80,28 @@ export default function SchoolCrest({ size = 40, variant = "bambusa" }) {
     );
   }
 
+  if (variant === "appletree") {
+    // Apple Tree High School — a green roundel with a tree, matching the
+    // registration reference. Original artwork, like the rest of these.
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 40 40"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle cx="20" cy="20" r="17" fill="#ffffff" stroke="#1f8a4c" strokeWidth="1.6" />
+        <circle cx="20" cy="20" r="13.5" fill="#ffffff" stroke="#1f8a4c" strokeWidth="1" />
+        <circle cx="20" cy="17" r="6.6" fill="#1f8a4c" />
+        <circle cx="15.2" cy="19.4" r="4.2" fill="#1f8a4c" />
+        <circle cx="24.8" cy="19.4" r="4.2" fill="#1f8a4c" />
+        <rect x="18.9" y="21" width="2.2" height="7" rx="1" fill="#2f6b43" />
+        <path d="M13 28.5 H27" stroke="#1f8a4c" strokeWidth="1.4" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
   if (variant === "elbert") {
     // Mount Elbert University — maroon shield with a snow-capped peak.
     return (

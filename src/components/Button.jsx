@@ -10,12 +10,14 @@ export default function Button({
   onClick,
   type = "button",
   icon: Icon,
+  disabled = false,
 }) {
   return (
     <button
       type={type}
       className={`btn btn--${variant}`}
       onClick={onClick}
+      disabled={disabled}
     >
       {Icon && <Icon size={18} strokeWidth={2} aria-hidden="true" />}
       {children}
