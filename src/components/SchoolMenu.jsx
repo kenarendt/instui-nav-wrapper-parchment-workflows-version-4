@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import SchoolCrest from "./SchoolCrest.jsx";
 import "./SchoolMenu.css";
 
@@ -16,6 +17,13 @@ import "./SchoolMenu.css";
  * it would do nothing. Callers decide whether a switcher appears at all — with
  * one school in the service there is nothing to switch to, and no trigger
  * should be drawn.
+ *
+ * `onAddSchool` adds a last item for connecting a school the user does not have
+ * yet. The learner side uses it: someone who has this menu open is already
+ * thinking about which school, so the school they have not added belongs in the
+ * same list rather than in a corner of the page. The admin side does not pass
+ * it — an admin's schools come from what they administer, not from something
+ * they can add here.
  */
 export default function SchoolMenu({
   menuRef,
@@ -24,6 +32,8 @@ export default function SchoolMenu({
   currentSchoolId,
   currentName,
   onSelect,
+  // Optional: connect a school the user has not added yet.
+  onAddSchool,
   // "rail" anchors beside the nav rail; "below" drops under its trigger,
   // right-aligned.
   placement = "rail",
@@ -54,6 +64,21 @@ export default function SchoolMenu({
           <span className="schoolmenu__name">{s.name}</span>
         </button>
       ))}
+      {onAddSchool && (
+        <div className="schoolmenu__add">
+          <button
+            type="button"
+            role="menuitem"
+            className="schoolmenu__item schoolmenu__item--add"
+            onClick={() => onAddSchool()}
+          >
+            <span className="schoolmenu__crest" aria-hidden="true">
+              <Plus size={20} strokeWidth={2} />
+            </span>
+            <span className="schoolmenu__name">Add another school</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

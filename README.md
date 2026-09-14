@@ -55,14 +55,21 @@ Notes on the file:// approach:
      dashboard. Schools hang off the service, not the account, so the menu only
      offers the schools attached to the service on screen, and both triggers
      disappear in a service that covers one school.
-4. Admin dashboards open with a **school band**: crest, school name at heading
-   size, location, and a rule in the school's own primary colour. Research found
-   that admins could not easily tell whose work they were looking at, so the
-   school is stated at the top of the work rather than only in the chrome. The
-   band renders from `Wrapper`, so every admin service gets the same one in the
-   same place and a new service gets it for free.
-5. All admin service dashboards share one common dashboard pattern.
-6. Platform Settings sits in the nav account menu, under Account Settings. It
+4. Admin dashboards and the learner credentials dashboard open with a **school
+   band**: crest, school name at heading size, location, and a rule in the
+   school's own primary colour. Research found that admins could not easily tell
+   whose work they were looking at, so the school is stated at the top of the
+   work rather than only in the chrome. The band renders from `Wrapper`, so every
+   school-scoped page gets the same one in the same place.
+5. On the learner side the school switcher chooses whose credentials are on
+   screen, replacing the old tab bar. Its menu carries **Add another school** at
+   the foot, below a divider, since someone with that menu open is already
+   deciding which school. The two views that span schools — **All Credentials**
+   and **Other Badges** — are nav items rather than tabs, because neither belongs
+   to a school; they show no band and no switcher, which is the honest signal
+   that they are not school-scoped.
+6. All admin service dashboards share one common dashboard pattern.
+7. Platform Settings sits in the nav account menu, under Account Settings. It
    opens in its own tab, since it is a side trip rather than a service.
 
 The prototype panel under the login card varies the shape of the account —
@@ -73,7 +80,9 @@ change.
 
 ## School branding
 
-Each school carries a `brandColor` in `src/data/experiences.js`. The band sets
+Each school carries a `brandColor`, in `src/data/experiences.js` for admins and
+`src/data/credentials.js` for learners, matched so the same school looks the same
+from either side. The band sets
 it as the `--school-brand` custom property, and the rule reads that property
 rather than a hard-coded fill, so any other decorative element that should
 carry the school's colour can read the same one. Treat it as decoration only: a

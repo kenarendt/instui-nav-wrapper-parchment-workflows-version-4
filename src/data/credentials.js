@@ -2,8 +2,17 @@
  * Learner credentials data for the Parchment Credentials screen.
  *
  * A learner collects records across the schools they attend. Each school has
- * its own credentials, badges, insights, directory, and order options. The
- * "All Credentials" and "Other Badges" views aggregate across schools.
+ * its own credentials, badges, insights, directory, and order options.
+ *
+ * The dashboard shows one school at a time, chosen with the same school
+ * switcher the admin side uses. The two views that span schools — all
+ * credentials, and badges earned outside any school — are their own pages in
+ * the nav rail rather than tabs, since neither belongs to a school.
+ *
+ * `brandColor` matches the same school on the admin side, so a learner and an
+ * admin looking at Bambusa University see the same colour. A school sets this
+ * itself, so treat it as decoration: the crest, name and location carry the
+ * identity on their own.
  */
 
 export const SCHOOLS = [
@@ -13,6 +22,7 @@ export const SCHOOLS = [
     crest: "bambusa",
     location: "Denver, Colorado",
     country: "United States",
+    brandColor: "#1d354f",
     credentials: [
       {
         type: "Diploma",
@@ -65,6 +75,7 @@ export const SCHOOLS = [
     crest: "panda",
     location: "Portland, Oregon",
     country: "United States",
+    brandColor: "#1f6b4f",
     credentials: [
       {
         type: "Diploma",

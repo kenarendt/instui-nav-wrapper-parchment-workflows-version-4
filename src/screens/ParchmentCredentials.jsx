@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   FileStack,
   Receipt,
+  ScrollText,
   Settings,
   Plus,
   ChevronRight,
@@ -24,7 +25,6 @@ import RecordCard from "../components/blocks/RecordCard.jsx";
 import RecordDetail from "./RecordDetail.jsx";
 import ShareModal from "../components/ShareModal.jsx";
 import CreateRecordFlow from "../components/CreateRecordFlow.jsx";
-import SchoolCrest from "../components/SchoolCrest.jsx";
 import CredentialMark from "../components/CredentialMark.jsx";
 import { account } from "../data/experiences.js";
 import { RECORDS } from "../data/records.js";
@@ -37,9 +37,19 @@ import {
 } from "../data/credentials.js";
 import "./ParchmentCredentials.css";
 
+/**
+ * The dashboard shows one school at a time, so the two views that span schools
+ * are nav items rather than tabs. Neither belongs to a school: "All
+ * credentials" is the flat list across every school, and "Other badges" is
+ * what the learner earned outside any of them. Putting them beside My Records
+ * groups them correctly — things the learner owns, one level up from any single
+ * school.
+ */
 const NAV_ITEMS = [
   { key: "dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { key: "records", label: "My Records", Icon: FileStack },
+  { key: "allCredentials", label: "All Credentials", Icon: ScrollText },
+  { key: "otherBadges", label: "Other Badges", Icon: Award },
   { key: "orders", label: "Orders", Icon: Receipt },
   { key: "settings", label: "Settings", Icon: Settings },
 ];
@@ -93,52 +103,41 @@ function BadgeRow({ badge }) {
 function SchoolView({ school }) {
   return (
     <>
-      <Panel padded={false}>
-        <div className="pc-card-pad">
-          <div className="school-head">
-            <span className="school-head__crest" aria-hidden="true">
-              <SchoolCrest size={48} variant={school.crest} />
-            </span>
-            <div className="school-head__text">
-              <h2 className="school-head__name">{school.name}</h2>
-              <p className="school-head__meta">{school.location}</p>
-              <p className="school-head__meta">{school.country}</p>
-            </div>
-            <button className="panel__menu" aria-label="More options">
-              <span className="pc-dots">⋮</span>
-            </button>
-          </div>
-          <div className="school-head__rule" />
+      {/* No identity header here any more. The school band above the page
+          carries the crest, name, location and colour, so repeating it at the
+          top of the first panel would say the same thing twice. */}
+      {/* Neither panel names the school. The band directly above says it at
+          heading size, so repeating it in every panel title turns the school
+          name into wallpaper. */}
+      <Panel
+        title="Credentials"
+        subtitle="Everything this school has issued to you."
+        showMenu
+      >
+        <div className="cred-list">
+          {school.credentials.map((c, i) => (
+            <CredentialRow key={i} cred={c} />
+          ))}
+        </div>
 
-          <div className="cred-list">
-            {school.credentials.map((c, i) => (
-              <CredentialRow key={i} cred={c} />
-            ))}
-          </div>
+        <h3 className="pc-subhead">Digital Badges</h3>
+        <div className="cred-list">
+          {school.badges.map((b, i) => (
+            <BadgeRow key={i} badge={b} />
+          ))}
+        </div>
 
-          <h3 className="pc-subhead">Digital Badges</h3>
-          <div className="cred-list">
-            {school.badges.map((b, i) => (
-              <BadgeRow key={i} badge={b} />
-            ))}
-          </div>
-
-          <div className="pc-footer-row">
-            <span className="pc-footer-text">
-              View and manage all of your digital badges.
-            </span>
-            <button className="pc-link">
-              View all <ArrowRight size={14} strokeWidth={2} />
-            </button>
-          </div>
+        <div className="pc-footer-row">
+          <span className="pc-footer-text">
+            View and manage all of your digital badges.
+          </span>
+          <button className="pc-link">
+            View all <ArrowRight size={14} strokeWidth={2} />
+          </button>
         </div>
       </Panel>
 
-      <Panel
-        title={`${school.name} credential insights`}
-        subtitle="This year"
-        showMenu
-      >
+      <Panel title="Credential insights" subtitle="This year" showMenu>
         <div className="pc-insights">
           {school.insights.map((s, i) => (
             <div key={i} className="pc-insight">
@@ -243,6 +242,71 @@ export default function ParchmentCredentials() {
     );
   }
 
+  // ── Cross-school pages ───────────────────────────────────────────
+  // These two used to be tabs beside the schools, which put them inside a
+  // control that otherwise meant "which school". Neither belongs to a school,
+  // so both became pages in the nav rail. They carry no school band and no
+  // switcher, which is the honest signal that they are not school-scoped.
+  if (page === "allCredentials" || page === "otherBadges") {
+    const isBadges = page === "otherBadges";
+    return (
+      <Wrapper
+        navProps={{
+          logo: <CredentialMark size={40} />,
+          institutionName: "Parchment",
+          username: account.name,
+          userRole: account.learnerRole,
+          items: navItems,
+          productLogo: "parchment",
+        }}
+        experienceType="learner"
+        title={isBadges ? "Other badges" : "All credentials"}
+        description={
+          isBadges
+            ? "Badges you've earned outside of your schools."
+            : "Everything you've earned, across every school you've connected."
+        }
+        trailing={
+          !isBadges && (
+            <Panel
+              title="Credentials"
+              subtitle="The types of credentials you've earned"
+              showMenu
+            >
+              <DonutChart
+                segments={ALL_DONUT.segments}
+                centerLabel={ALL_DONUT.total}
+              />
+              <div className="pc-center pc-collection">
+                <Button variant="secondary">Create a collection</Button>
+              </div>
+            </Panel>
+          )
+        }
+      >
+        {/* No panel title: the page heading directly above already names this,
+            and a panel is the only thing on the page. The subtitle earns its
+            place by saying something the heading does not. */}
+        <Panel
+          subtitle={
+            isBadges
+              ? "Issued by organizations other than your schools."
+              : "Sorted with the most recent first."
+          }
+          showMenu
+        >
+          <div className="cred-list">
+            {isBadges
+              ? OTHER_BADGES.map((b, i) => <BadgeRow key={i} badge={b} />)
+              : allCredentials().map((c, i) => (
+                  <CredentialRow key={i} cred={c} showSchool />
+                ))}
+          </div>
+        </Panel>
+      </Wrapper>
+    );
+  }
+
   // ── Orders / Settings placeholders ───────────────────────────────
   if (page === "orders" || page === "settings") {
     const label = page === "orders" ? "Orders" : "Settings";
@@ -267,50 +331,11 @@ export default function ParchmentCredentials() {
     );
   }
 
-  const TABS = [
-    ...SCHOOLS.map((s) => ({ id: s.id, label: s.name })),
-    { id: "otherBadges", label: "Other Badges" },
-    { id: "allCredentials", label: "All Credentials" },
-  ];
+  // The dashboard is always one school. Which one is this page's own state, so
+  // it is handed to the shell as a schoolContext rather than derived there.
+  const activeSchool = schoolById(active) ?? SCHOOLS[0];
 
-  const activeSchool = schoolById(active);
-  const isAggregate = active === "otherBadges" || active === "allCredentials";
-
-  // Nav logo + name reflect the active view.
-  let navLogo;
-  let navName;
-  if (activeSchool) {
-    navLogo = <SchoolCrest size={40} variant={activeSchool.crest} />;
-    navName = activeSchool.name;
-  } else {
-    navLogo = <CredentialMark size={40} />;
-    navName = active === "otherBadges" ? "Other Badges" : "All Credentials";
-  }
-
-  let main;
-  if (activeSchool) {
-    main = <SchoolView school={activeSchool} />;
-  } else if (active === "otherBadges") {
-    main = (
-      <Panel title="Other Badges" subtitle="Badges you've earned outside your schools." showMenu>
-        <div className="cred-list">
-          {OTHER_BADGES.map((b, i) => (
-            <BadgeRow key={i} badge={b} />
-          ))}
-        </div>
-      </Panel>
-    );
-  } else {
-    main = (
-      <Panel title="All Credentials" subtitle="Everything you've earned across your schools." showMenu>
-        <div className="cred-list">
-          {allCredentials().map((c, i) => (
-            <CredentialRow key={i} cred={c} showSchool />
-          ))}
-        </div>
-      </Panel>
-    );
-  }
+  const main = <SchoolView school={activeSchool} />;
 
   const trailing = (
     <>
@@ -339,8 +364,8 @@ export default function ParchmentCredentials() {
 
       <Panel title="Credentials" subtitle="The types of credentials you've earned" showMenu>
         <DonutChart
-          segments={activeSchool ? activeSchool.donut.segments : ALL_DONUT.segments}
-          centerLabel={activeSchool ? activeSchool.donut.total : ALL_DONUT.total}
+          segments={activeSchool.donut.segments}
+          centerLabel={activeSchool.donut.total}
         />
         <div className="pc-center pc-collection">
           <Button variant="secondary">Create a collection</Button>
@@ -377,36 +402,27 @@ export default function ParchmentCredentials() {
   return (
     <Wrapper
       navProps={{
-        logo: navLogo,
-        institutionName: navName,
         username: account.name,
         userRole: account.learnerRole,
         items: navItems,
         productLogo: "parchment",
       }}
       experienceType="learner"
+      // Same shape the admin dashboards resolve to, so the learner gets the
+      // same band and the same switcher on the nav mark. Adding a school is the
+      // one thing only this side offers, and it rides in the same menu: someone
+      // with that menu open is already deciding which school.
+      schoolContext={{
+        school: activeSchool,
+        schools: SCHOOLS,
+        onSelect: (picked) => setActive(picked.id),
+        onAdd: () => setAddOpen(true),
+      }}
       title="Parchment Credentials"
       actions={
         <>
           <Button variant="secondary">Customize Dashboard</Button>
         </>
-      }
-      tabs={
-        <div className="pc-tabbar">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              className={`pc-tab${t.id === active ? " pc-tab--active" : ""}`}
-              aria-current={t.id === active ? "page" : undefined}
-              onClick={() => setActive(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-          <button className="pc-addschool" onClick={() => setAddOpen(true)}>
-            <Plus size={16} strokeWidth={2} /> Add Another School
-          </button>
-        </div>
       }
       trailing={trailing}
     >

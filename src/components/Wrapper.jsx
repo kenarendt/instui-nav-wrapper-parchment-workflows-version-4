@@ -32,11 +32,17 @@ import "./Wrapper.css";
  * side that flexes. The state is a display preference held in BrowserContext,
  * so toggling it on one page applies everywhere.
  *
- * Pass `serviceId` on an admin service page. The school an admin acts for is
- * scoped to the service, so that id decides both which school the page names
- * under its title and which schools the nav's institution mark offers. An admin
- * can cover four schools in Transcript Services and one in Receive, and the
- * switcher disappears in the second case because there is nothing to switch to.
+ * A page scoped to one school gets the band and a switcher on the nav mark.
+ * There are two ways to say so, because the two sides know it differently:
+ *   - Admin service pages pass `serviceId`. The school comes from the service
+ *     and lives on the tab, so the shell can work it out on its own. An admin
+ *     covers four schools in Transcript Services and one in Receive, and the
+ *     switcher disappears in the second case.
+ *   - The learner passes `schoolContext` directly, because which school they are
+ *     looking at is that page's own state rather than anything the tab carries,
+ *     and because they can add a school, which an admin cannot.
+ * Either way it resolves to one object, so the band and the nav mark have a
+ * single thing to read and cannot diverge between the two experiences.
  *
  * An admin service page states the school at the top of the work itself, in the
  * school band above the first panel, rather than as a line under the page
@@ -76,6 +82,9 @@ export default function Wrapper({
   experienceType,
   // Service id, on admin service pages that act for one school at a time.
   serviceId,
+  // { school, schools, onSelect, onAdd } — for a page that knows its own school
+  // rather than taking it from the service. Overrides the serviceId path.
+  schoolContext,
   // Learner pages: state how many schools are connected under the page title.
   showSchoolSummary = false,
   breadcrumb,
@@ -98,22 +107,36 @@ export default function Wrapper({
 
   const service = serviceId ? serviceById(serviceId) : undefined;
   // Every school this admin covers inside this service, and the one on screen.
-  const schools = service ? serviceSchools(serviceId, session) : [];
-  const school = service
-    ? schoolById(activeTab?.params?.schoolId) ?? schools[0]
+  const adminSchools = service ? serviceSchools(serviceId, session) : [];
+  const adminSchool = service
+    ? schoolById(activeTab?.params?.schoolId) ?? adminSchools[0]
     : undefined;
+
+  const ctx =
+    schoolContext ??
+    (adminSchool
+      ? {
+          school: adminSchool,
+          schools: adminSchools,
+          onSelect: activeTab
+            ? (picked) => setTabSchool(activeTab.id, picked.id)
+            : undefined,
+        }
+      : null);
+  const school = ctx?.school;
+  const schools = ctx?.schools ?? [];
 
   // What the header and nav say about school context. A page showing the band
   // says nothing under its title — the band has already said it, louder.
   let schoolLine = null;
   let schoolIdentity = null;
-  if (experienceType === "admin") {
-    if (school) {
-      schoolIdentity = {
-        institutionName: school.name,
-        logo: <SchoolCrest size={40} variant={school.crest} />,
-      };
-    } else if (session.multiSchool !== false) {
+  if (school) {
+    schoolIdentity = {
+      institutionName: school.name,
+      logo: <SchoolCrest size={40} variant={school.crest} />,
+    };
+  } else if (experienceType === "admin") {
+    if (session.multiSchool !== false) {
       // Not scoped to one school, so it names none of them.
       schoolLine = "Across all of your schools";
       schoolIdentity = {
@@ -157,14 +180,11 @@ export default function Wrapper({
       <GlobalNav
         {...nav}
         // Quick school switching straight from the institution mark, scoped to
-        // the schools this service covers.
+        // the schools this page covers.
         schools={school ? schools : []}
         currentSchoolId={school?.id}
-        onSelectSchool={
-          school && activeTab
-            ? (picked) => setTabSchool(activeTab.id, picked.id)
-            : undefined
-        }
+        onSelectSchool={school ? ctx?.onSelect : undefined}
+        onAddSchool={school ? ctx?.onAdd : undefined}
         // A side trip rather than a service, so it opens its own tab and
         // leaves the work behind it intact. Deduped, so it never opens twice.
         onPlatformSettings={() =>
@@ -219,11 +239,8 @@ export default function Wrapper({
             <SchoolBand
               school={school}
               schools={schools}
-              onSelectSchool={
-                activeTab
-                  ? (picked) => setTabSchool(activeTab.id, picked.id)
-                  : undefined
-              }
+              onSelectSchool={ctx?.onSelect}
+              onAddSchool={ctx?.onAdd}
             />
           )}
 

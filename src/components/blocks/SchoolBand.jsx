@@ -31,6 +31,8 @@ export default function SchoolBand({
   // Every school this admin covers in the service on screen.
   schools = [],
   onSelectSchool,
+  // Learner side: connect a school they have not added yet.
+  onAddSchool,
 }) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef(null);
@@ -39,7 +41,11 @@ export default function SchoolBand({
   useDismissOnOutside(open, () => setOpen(false), [btnRef, menuRef], btnRef);
 
   if (!school) return null;
-  const canSwitch = Boolean(onSelectSchool) && schools.length > 1;
+  // A trigger is worth drawing if it can change something: another school to
+  // move to, or a school to add. An admin gets no add action, so a
+  // single-school service still shows no chevron.
+  const canSwitch =
+    (Boolean(onSelectSchool) && schools.length > 1) || Boolean(onAddSchool);
 
   return (
     <section
@@ -89,9 +95,17 @@ export default function SchoolBand({
                 currentSchoolId={school.id}
                 currentName={school.name}
                 onSelect={(picked) => {
-                  onSelectSchool(picked);
+                  onSelectSchool?.(picked);
                   setOpen(false);
                 }}
+                onAddSchool={
+                  onAddSchool
+                    ? () => {
+                        onAddSchool();
+                        setOpen(false);
+                      }
+                    : undefined
+                }
               />
             )}
           </div>

@@ -69,6 +69,8 @@ export default function GlobalNav({
   schools = [],
   currentSchoolId,
   onSelectSchool,
+  // Learner side: connect a school they have not added yet.
+  onAddSchool,
   onLogout,
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -80,7 +82,8 @@ export default function GlobalNav({
   // Other schools this admin can switch to. The one they're in is named in
   // the menu's header rather than listed, since choosing it would do nothing.
   const otherSchools = schools.filter((s) => s.id !== currentSchoolId);
-  const canSwitchSchool = Boolean(onSelectSchool) && otherSchools.length > 0;
+  const canSwitchSchool =
+    (Boolean(onSelectSchool) && otherSchools.length > 0) || Boolean(onAddSchool);
 
   useDismissOnOutside(
     schoolOpen,
@@ -167,9 +170,17 @@ export default function GlobalNav({
                 currentSchoolId={currentSchoolId}
                 currentName={institutionName}
                 onSelect={(s) => {
-                  onSelectSchool(s);
+                  onSelectSchool?.(s);
                   setSchoolOpen(false);
                 }}
+                onAddSchool={
+                  onAddSchool
+                    ? () => {
+                        onAddSchool();
+                        setSchoolOpen(false);
+                      }
+                    : undefined
+                }
               />
             )}
           </>
