@@ -309,14 +309,3 @@
   accent-color: var(--button-primary-bg);
   cursor: pointer;
 }
-
-/* The boundary page reuses the sign-in surface, centred rather than stacked. */
-.signin__card--boundary {
-  align-items: center;
-  text-align: center;
-  gap: var(--space-lg);
-}
-
-.signin__card--boundary .btn {
-  width: 100%;
-}

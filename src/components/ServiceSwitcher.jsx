@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import { BadgeCheck, Check } from "lucide-react";
 import PlatformServicesMark from "./PlatformServicesMark.jsx";
 import { iconFor } from "./blocks/serviceIcons.js";
+import CanvasLogo from "./CanvasLogo.jsx";
+import MasteryLogo from "./MasteryLogo.jsx";
 import useDismissOnOutside from "../hooks/useDismissOnOutside.js";
 import { useBrowser } from "../browser/BrowserContext.jsx";
 import { destinations, LEARNER_DESTINATION } from "../data/experiences.js";
@@ -43,16 +45,20 @@ export default function ServiceSwitcher() {
   // point at the current page.
   if (all.length < 2) return null;
 
-  const currentId =
-    activeTab?.kind === "service"
-      ? activeTab.params?.serviceId
-      : activeTab?.kind === "parchmentCredentials"
-        ? LEARNER_DESTINATION.id
-        : undefined;
+  // Which destination the tab is already on, so the menu can mark it. Every
+  // kind that is a destination has to be listed here, or the menu offers the
+  // page you are standing on as somewhere to go.
+  const CURRENT_BY_KIND = {
+    service: () => activeTab.params?.serviceId,
+    parchmentCredentials: () => LEARNER_DESTINATION.id,
+    product: () => activeTab.params?.productId,
+  };
+  const currentId = activeTab ? CURRENT_BY_KIND[activeTab.kind]?.() : undefined;
   const current = all.find((d) => d.id === currentId);
 
   const adminItems = all.filter((d) => d.group === "admin");
   const learnerItems = all.filter((d) => d.group === "learner");
+  const productItems = all.filter((d) => d.group === "product");
 
   const go = (destination) => {
     setOpen(false);
@@ -63,6 +69,12 @@ export default function ServiceSwitcher() {
   const renderItem = (destination) => {
     const selected = destination.id === currentId;
     const Icon = destination.icon ? iconFor(destination.icon) : null;
+    const ProductLogo =
+      destination.id === "canvas"
+        ? CanvasLogo
+        : destination.id === "mastery"
+          ? MasteryLogo
+          : null;
     return (
       <li key={destination.id}>
         <button
@@ -73,7 +85,9 @@ export default function ServiceSwitcher() {
           onClick={() => go(destination)}
         >
           <span className="svcsw__item-icon" aria-hidden="true">
-            {Icon ? (
+            {ProductLogo ? (
+              <ProductLogo size={20} color="currentColor" />
+            ) : Icon ? (
               <Icon size={20} strokeWidth={2} />
             ) : (
               <BadgeCheck size={20} strokeWidth={2} />
@@ -131,11 +145,17 @@ export default function ServiceSwitcher() {
           {learnerItems.length > 0 && (
             <div className="svcsw__group" role="group" aria-labelledby="svcsw-learner">
               <p className="svcsw__group-label" id="svcsw-learner">
-                My experience
+                Parchment Learner Account
               </p>
               <ul className="svcsw__list">{learnerItems.map(renderItem)}</ul>
             </div>
           )}
+
+          {productItems.map((d) => (
+            <div className="svcsw__group" key={d.id}>
+              <ul className="svcsw__list">{renderItem(d)}</ul>
+            </div>
+          ))}
         </div>
       )}
     </div>

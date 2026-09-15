@@ -287,6 +287,16 @@ export function serviceTab(serviceId) {
   };
 }
 
+/** The tab another Instructure product opens in. */
+export function productTab(productId, name) {
+  return {
+    kind: "product",
+    title: name,
+    dedupeKey: `product:${productId}`,
+    params: { productId },
+  };
+}
+
 /** The tab the learner experience opens in. */
 export function credentialsTab() {
   return {
@@ -297,8 +307,14 @@ export function credentialsTab() {
 }
 
 /**
- * Everything the services switcher can offer, in menu order. Admin services
- * first, then the learner experience under its own heading.
+ * Everything the services switcher can offer, in menu order: admin services
+ * first, then the learner experience under its own heading, then the other
+ * Instructure products the account reaches, each on its own.
+ *
+ * Products sit in the same menu as services because they are the same kind of
+ * move for the person making it — leave what you are doing, go somewhere else
+ * you have access to. Splitting them across two controls would make the user
+ * work out which kind of destination they wanted before they could go there.
  */
 export function destinations(session = {}) {
   const list = adminServiceIds(session).map((id) => ({
@@ -318,15 +334,37 @@ export function destinations(session = {}) {
       tab: () => credentialsTab(),
     });
   }
+  for (const [id, name, present] of [
+    ["mastery", "Mastery", session.hasMastery],
+    ["canvas", "Canvas", session.hasCanvas],
+  ]) {
+    if (present) {
+      list.push({
+        id,
+        group: "product",
+        name,
+        tab: () => productTab(id, name),
+      });
+    }
+  }
   return list;
 }
 
 /**
- * Where sign-in lands. Admin access takes precedence, so an account carrying
- * both an admin service and a learner record opens on the default admin
- * service at its default school.
+ * Where sign-in lands. Signing in to Mastery or Canvas lands on that product,
+ * which in this prototype is a page saying where it stops — reached inside the
+ * simulated browser rather than as a dead end, so the services switcher can
+ * still carry the user over to Parchment.
+ *
+ * Within Parchment, admin access takes precedence, so an account carrying both
+ * an admin service and a learner record opens on the default admin service at
+ * its default school.
  */
 export function landingTab(session = {}) {
+  if (session.product && session.product !== "parchment") {
+    const name = session.product === "mastery" ? "Mastery" : "Canvas";
+    return productTab(session.product, name);
+  }
   const adminIds = adminServiceIds(session);
   if (adminIds.length) {
     const preferred = PREFERENCES.defaultServiceId;

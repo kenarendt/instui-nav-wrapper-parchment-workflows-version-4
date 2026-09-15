@@ -2,6 +2,7 @@ import ServiceDashboard from "../screens/ServiceDashboard.jsx";
 import LearnerDashboard from "../screens/LearnerDashboard.jsx";
 import PlatformSettings from "../screens/PlatformSettings.jsx";
 import ParchmentCredentials from "../screens/ParchmentCredentials.jsx";
+import ProductPlaceholder from "../screens/ProductPlaceholder.jsx";
 
 /**
  * Maps a tab `kind` to the page component that renders inside the tab.
@@ -23,6 +24,8 @@ export function renderPage(tab) {
       return <PlatformSettings />;
     case "parchmentCredentials":
       return <ParchmentCredentials />;
+    case "product":
+      return <ProductPlaceholder productId={tab.params?.productId} />;
     default:
       return null;
   }

@@ -20,6 +20,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import CanvasLogo from "./CanvasLogo.jsx";
+import MasteryLogo from "./MasteryLogo.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
 import SchoolMenu from "./SchoolMenu.jsx";
 import Toggle from "./Toggle.jsx";
@@ -262,6 +263,8 @@ export default function GlobalNav({
         <div className="gnav__product">
           {productLogo === "canvas" ? (
             <CanvasLogo size={24} />
+          ) : productLogo === "mastery" ? (
+            <MasteryLogo size={24} />
           ) : productLogo === "parchment" ? (
             <span className="gnav__product-lockup">
               <span className="gnav__product-mark" aria-hidden="true" />

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import SignIn from "./screens/SignIn.jsx";
 import Register from "./screens/Register.jsx";
-import ProductBoundary from "./screens/ProductBoundary.jsx";
 import { BrowserProvider } from "./browser/BrowserContext.jsx";
 import BrowserFrame from "./browser/BrowserFrame.jsx";
 import { landingTab } from "./data/experiences.js";
@@ -14,9 +13,10 @@ import { REGISTRATION_SCHOOL } from "./data/credentials.js";
  *   1. Sign in. An email first, then the product if the account reaches more
  *      than one, then the password.
  *   2. Register, when the email check finds no account. Parchment learner only.
- *   3. The boundary page, if they signed in to Mastery or Canvas, which this
- *      prototype does not build.
- *   4. The app itself, in the simulated browser.
+ *   3. The app itself, in the simulated browser. Signing in to Mastery or Canvas
+ *      lands on a product tab there — a page saying where the prototype stops,
+ *      reached inside the browser so the services switcher can still carry the
+ *      user over to Parchment rather than dead-ending them.
  *
  * Sign-in resolves one destination and lands on it: admin access beats learner
  * access, the default service decides which admin service, and that service's
@@ -58,15 +58,6 @@ export default function App() {
 
   if (!session) {
     return <SignIn onSignIn={setSession} onRegister={setRegistering} />;
-  }
-
-  if (session.product && session.product !== "parchment") {
-    return (
-      <ProductBoundary
-        product={session.product}
-        onBack={() => setSession(null)}
-      />
-    );
   }
 
   return (

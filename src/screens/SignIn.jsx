@@ -51,7 +51,9 @@ export default function SignIn({ onSignIn, onRegister }) {
   const [noAccount, setNoAccount] = useState(false);
 
   const products = productsForAccount({ hasMastery, hasCanvas });
-  const session = { email, shape, multiSchool, singleService };
+  // hasMastery / hasCanvas ride along: once signed in, the services switcher
+  // offers every product the account reaches, not just the one they picked.
+  const session = { email, shape, multiSchool, singleService, hasMastery, hasCanvas };
 
   const checkEmail = (e) => {
     e.preventDefault();
@@ -241,9 +243,11 @@ export default function SignIn({ onSignIn, onRegister }) {
             </div>
 
             <div className="signin__opt">
-              <span className="signin__opt-label">Admin has one service only</span>
+              <span className="signin__opt-label">
+                Admin has one Parchment service only
+              </span>
               <Toggle
-                label="Admin has one service only"
+                label="Admin has one Parchment service only"
                 defaultOn={false}
                 onChange={setSingleService}
               />

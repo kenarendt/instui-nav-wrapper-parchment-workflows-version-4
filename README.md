@@ -42,9 +42,11 @@ Notes on the file:// approach:
      Parchment, Mastery, and Canvas. One product and this step never appears.
    - **The password** for the product they picked, with a Forgot password link.
    An address with no account goes to registration instead, so being new stops
-   being something the user has to notice and self-select. Signing in to Mastery
-   or Canvas reaches a page that says plainly this prototype covers Parchment,
-   rather than a hollow imitation of a product we have not built.
+   being something the user has to notice and self-select. Mastery and Canvas
+   reach a page that says plainly this prototype covers Parchment, rather than a
+   hollow imitation of a product we have not built. That page renders inside the
+   simulated browser with the services switcher still in place, so it is a
+   boundary rather than a dead end.
 2. Sign-in drops you straight into a service. There is no hub screen and no
    school selection screen in between. Landing resolves in three steps:
    - Admin access beats learner access, so an account carrying both opens on an
