@@ -1,4 +1,7 @@
 .wrap {
+  /* Positioning context for the onboarding tour, which covers the page area
+     but deliberately not the simulated browser chrome above it. */
+  position: relative;
   display: flex;
   align-items: stretch;
   width: 100%;

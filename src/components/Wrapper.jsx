@@ -3,6 +3,7 @@ import GlobalNav from "./GlobalNav.jsx";
 import IconButton from "./IconButton.jsx";
 import ServiceSwitcher from "./ServiceSwitcher.jsx";
 import SchoolBand from "./blocks/SchoolBand.jsx";
+import OnboardingTour from "./OnboardingTour.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
 import { useBrowser } from "../browser/BrowserContext.jsx";
 import {
@@ -103,6 +104,8 @@ export default function Wrapper({
     activeTab,
     setTabSchool,
     openTab,
+    onboardingOpen,
+    dismissOnboarding,
   } = useBrowser();
 
   const service = serviceId ? serviceById(serviceId) : undefined;
@@ -254,6 +257,11 @@ export default function Wrapper({
           </div>
         </div>
       </main>
+
+      {/* Over the page area, not the simulated browser chrome. Filters itself
+          down to the controls actually on screen, so it never points at
+          something this account does not have. */}
+      {onboardingOpen && <OnboardingTour onDone={dismissOnboarding} />}
     </div>
   );
 }

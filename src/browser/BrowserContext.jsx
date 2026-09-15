@@ -8,10 +8,12 @@ const nextId = () => `tab-${++counter}`;
 /**
  * BrowserProvider — owns the simulated browser's tab state.
  *
- * It also holds two things that behave like saved settings rather than page
- * state: the expanded/collapsed display preference, and the `session` (the
- * shape of the signed-in account). Both live here so every page in every tab
- * agrees about them.
+ * It also holds three things that behave like saved settings rather than page
+ * state: the expanded/collapsed display preference, the `session` (the shape of
+ * the signed-in account), and whether the first-run walkthrough is still
+ * running. All three live here so every page in every tab agrees about them —
+ * the walkthrough especially, since dismissing it on one page must not leave it
+ * waiting on another.
  *
  * openTab dedupes on `dedupeKey`: if a tab with the same key already exists it
  * is focused instead of duplicated. navigateTab is the opposite move — it
@@ -37,6 +39,13 @@ export function BrowserProvider({
     () => setExpandedView((v) => !v),
     []
   );
+
+  // First-run walkthrough. Starts open only if sign-in asked for it, and once
+  // dismissed stays dismissed for the rest of the session.
+  const [onboardingOpen, setOnboardingOpen] = useState(
+    () => Boolean(session.onboarding)
+  );
+  const dismissOnboarding = useCallback(() => setOnboardingOpen(false), []);
 
   const openTab = useCallback((tab) => {
     setTabs((prev) => {
@@ -120,6 +129,8 @@ export function BrowserProvider({
     focusTab,
     expandedView,
     toggleExpandedView,
+    onboardingOpen,
+    dismissOnboarding,
   };
   return (
     <BrowserContext.Provider value={value}>{children}</BrowserContext.Provider>

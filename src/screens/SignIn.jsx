@@ -49,11 +49,14 @@ export default function SignIn({ onSignIn, onRegister }) {
   const [hasMastery, setHasMastery] = useState(false);
   const [hasCanvas, setHasCanvas] = useState(false);
   const [noAccount, setNoAccount] = useState(false);
+  const [onboarding, setOnboarding] = useState(false);
 
   const products = productsForAccount({ hasMastery, hasCanvas });
   // hasMastery / hasCanvas ride along: once signed in, the services switcher
   // offers every product the account reaches, not just the one they picked.
-  const session = { email, shape, multiSchool, singleService, hasMastery, hasCanvas };
+  const session = {
+    email, shape, multiSchool, singleService, hasMastery, hasCanvas, onboarding,
+  };
 
   const checkEmail = (e) => {
     e.preventDefault();
@@ -271,6 +274,15 @@ export default function SignIn({ onSignIn, onRegister }) {
               />
             </div>
 
+            <div className="signin__opt">
+              <span className="signin__opt-label">New user onboarding</span>
+              <Toggle
+                label="New user onboarding"
+                defaultOn={false}
+                onChange={setOnboarding}
+              />
+            </div>
+
             {/* A checkbox rather than a toggle: this is not a setting that
                 shades the account, it replaces the whole path. */}
             <label className="signin__check">
@@ -285,7 +297,7 @@ export default function SignIn({ onSignIn, onRegister }) {
             <p className="signin__demo-note">
               {noAccount
                 ? "Continue goes to registration. A new account can only be a Parchment learner."
-                : describeCheck(products.length, shape, singleService)}
+                : describeCheck(products.length, shape, singleService, onboarding)}
             </p>
           </div>
         )}
@@ -296,12 +308,17 @@ export default function SignIn({ onSignIn, onRegister }) {
 
 // Say out loud what the current settings will do, so the panel explains itself
 // rather than needing the rules held in someone's head.
-function describeCheck(productCount, shape, singleService) {
+function describeCheck(productCount, shape, singleService, onboarding) {
   const first =
     productCount > 1
       ? `${productCount} products, so Continue asks which one.`
       : "One product, so Continue goes straight to the password.";
-  if (shape === "learnerOnly") return `${first} Lands on My Credentials.`;
+  const tour = onboarding
+    ? " The walkthrough runs on arrival, covering whichever of the two switchers are on screen."
+    : "";
+  if (shape === "learnerOnly") {
+    return `${first} Lands on My Credentials.${tour}`;
+  }
   const services = singleService ? "one service" : "four services";
-  return `${first} Lands on Transcript Services, ${services}.`;
+  return `${first} Lands on Transcript Services, ${services}.${tour}`;
 }

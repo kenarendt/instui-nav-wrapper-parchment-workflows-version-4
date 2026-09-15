@@ -1,0 +1,141 @@
+/* Covers the page area only, not the simulated browser chrome — the tour is
+   about the app, not the fake window around it. overflow:hidden keeps the
+   hole's enormous box-shadow from bleeding past the page. */
+.tour {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.tour__blocker {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+/* The dim is this element's box-shadow, spread far enough to cover any page,
+   which leaves the element's own box as a clear hole. A box-shadow is not
+   hit-testable, so the blocker above does the intercepting. */
+.tour__hole {
+  position: absolute;
+  border-radius: var(--radius-navitem);
+  box-shadow:
+    0 0 0 3px var(--focus-outline-color),
+    0 0 0 9999px rgba(15, 23, 33, 0.6);
+  transition: top 160ms ease, left 160ms ease, width 160ms ease, height 160ms ease;
+}
+
+.tour__pop {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--background-containercolor);
+  border-radius: var(--radius-container-lg);
+  box-shadow: 0 16px 40px rgba(15, 23, 33, 0.28);
+  pointer-events: auto;
+}
+
+/* A small rotated square poking out at the control. */
+.tour__arrow {
+  position: absolute;
+  top: -6px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  background: var(--background-containercolor);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.tour__pop--above .tour__arrow {
+  top: auto;
+  bottom: -6px;
+}
+
+.tour__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.tour__title {
+  margin: 0;
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: var(--fontsize-textlg);
+  line-height: 1.25;
+  color: var(--heading-basecolor);
+}
+
+.tour__close {
+  display: inline-flex;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  padding: 2px;
+  color: var(--text-mutedcolor);
+  cursor: pointer;
+}
+
+.tour__close:focus-visible,
+.tour__back:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+.tour__body {
+  margin: 0;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textbase);
+  line-height: 1.5;
+  color: var(--text-mutedcolor);
+}
+
+.tour__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--nav-border-color);
+}
+
+.tour__count {
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  color: var(--text-mutedcolor);
+}
+
+.tour__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.tour__back {
+  border: none;
+  background: transparent;
+  padding: var(--space-xs);
+  font-family: var(--fontfamily-base);
+  font-weight: var(--fontweight-body-strong);
+  font-size: var(--fontsize-textbase);
+  color: var(--text-link-color);
+  cursor: pointer;
+}
+
+/* Wrapper for focus handling only; must not affect layout. */
+.tour__focus {
+  display: inline-flex;
+  outline: none;
+}
+
+@media (max-width: 480px) {
+  .tour__pop {
+    padding: var(--space-md);
+  }
+}

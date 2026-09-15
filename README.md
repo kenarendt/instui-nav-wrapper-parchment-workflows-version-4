@@ -109,14 +109,38 @@ their inputs rather than inside them, matching the rest of the prototype and
 keeping the label visible once typing starts; and the required-fields note reads
 "asterisk", which the reference misspells.
 
+## First-run walkthrough
+
+`components/OnboardingTour.jsx` + `.css`, switched on by "New user onboarding"
+at sign-in. It dims the page, cuts a hole over a control, and anchors a popover
+to it with a step counter and Back / Next.
+
+It points at the two controls this architecture depends on: the services
+switcher, then the school band. With no hub screen and no gate screens, someone
+who misses those two is stuck in whichever service and school they landed in, so
+they are worth a tour here in a way they would not be in an architecture with a
+hub to fall back on. The school step spotlights the whole band rather than just
+its chevron, so the message can say both things at once: this is whose work you
+are looking at, and this is where you change it.
+
+Steps are filtered by what is on screen, so the counter reads 1 of 2, 1 of 1, or
+the tour never appears. The school step needs a switcher, not just a band: an
+admin with one school in the service has nothing to switch to, and a tour
+pointing at a control the user does not have teaches them the product is broken.
+
+The page underneath is inert while it runs. The step counter promises a path
+through, and letting someone open the spotlit menu would cover the popover
+explaining it. Escape and the close button both end it, and once ended it stays
+ended for the session.
+
 ## The prototype panel
 
 It sits on the first sign-in step, since everything it varies is settled when
 the email is checked. It stands in for the account lookup: the shape of the
 Parchment account (admin plus learner, admin only, learner only), whether the
 admin covers several schools, whether they reach one service or four, whether
-the address also reaches Mastery or Canvas, and whether it has an account at
-all. A line underneath says in plain words what the current settings will do.
+the address also reaches Mastery or Canvas, whether the first-run walkthrough
+runs, and whether it has an account at all. A line underneath says in plain words what the current settings will do.
 
 ## School branding
 
