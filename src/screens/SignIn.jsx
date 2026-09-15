@@ -50,7 +50,9 @@ export default function SignIn({ onSignIn, onRegister }) {
   const [hasCanvas, setHasCanvas] = useState(false);
   const [noAccount, setNoAccount] = useState(false);
   const [onboarding, setOnboarding] = useState(false);
-  const [idReverify, setIdReverify] = useState(false);
+  // Whether this account has the ID verification feature at all. On, and the
+  // learner experience shows where they stand; off, and none of it appears.
+  const [idVerification, setIdVerification] = useState(true);
 
   const products = productsForAccount({ hasMastery, hasCanvas });
   const productName = products.find((p) => p.id === product)?.name;
@@ -58,16 +60,16 @@ export default function SignIn({ onSignIn, onRegister }) {
   // offers every product the account reaches, not just the one they picked.
   const session = {
     email, shape, multiSchool, singleService, hasMastery, hasCanvas, onboarding,
-    // Learners are put through an ID check; this is where it stands. A state is
-    // always set here because signing in means the account exists — a brand-new
-    // account, which has never verified, gets none (see App).
-    idVerification: idReverify ? "reverify" : "verified",
+    // Learners are put through an ID check. Signing in means the account
+    // exists, so it starts from the settled state; the pill in the account
+    // panel cycles to the others. Undefined hides the whole thing.
+    idVerification: idVerification ? "verified" : undefined,
   };
 
   const checkEmail = (e) => {
     e.preventDefault();
     if (noAccount) {
-      onRegister?.({ email });
+      onRegister?.({ email, idVerification });
       return;
     }
     if (products.length === 1) {
@@ -290,13 +292,11 @@ export default function SignIn({ onSignIn, onRegister }) {
             </div>
 
             <div className="signin__opt">
-              <span className="signin__opt-label">
-                Learner ID needs reverification
-              </span>
+              <span className="signin__opt-label">Learner ID verification</span>
               <Toggle
-                label="Learner ID needs reverification"
-                defaultOn={false}
-                onChange={setIdReverify}
+                label="Learner ID verification"
+                defaultOn
+                onChange={setIdVerification}
               />
             </div>
 

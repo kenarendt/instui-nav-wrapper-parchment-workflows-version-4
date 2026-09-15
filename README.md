@@ -170,6 +170,13 @@ Admins have no state here. Their standing comes from the institution that
 granted their access, not from an ID check, so the block is absent on admin
 pages — including for an account that is both.
 
+The sign-in toggle **Learner ID verification** switches the whole feature on and
+off: on, the learner experience shows all of the above and the account starts on
+Verified; off, none of it appears anywhere, including the rail icon and the
+account item's accessible name. Registration follows the same switch, so the two
+paths never disagree. It defaults on, since the absence is the case worth
+opting into.
+
 **Pressing the pill cycles to the next state**, which is prototype scaffolding
 rather than product behaviour. It sits on the pill so it stays clear of the
 Verify / Reverify action beside it, which is the real one. The state is held in
@@ -182,8 +189,8 @@ the email is checked. It stands in for the account lookup: the shape of the
 Parchment account (admin plus learner, admin only, learner only), whether the
 admin covers several schools, whether they reach one service or four, whether
 the address also reaches Mastery or Canvas, whether the first-run walkthrough
-runs, where the learner's ID verification starts, and whether it has an account
-at all. A line underneath says in plain words what the current settings will do.
+runs, whether the account has ID verification at all, and whether it has an
+account at all. A line underneath says in plain words what the current settings will do.
 
 ## School branding
 

@@ -46,8 +46,9 @@ export default function App() {
             shape: "learnerOnly",
             newAccount: true,
             // Never been through the ID check, which is exactly what the
-            // "Not Verified" state is for.
-            idVerification: "unverified",
+            // "Not Verified" state is for — unless the account has no ID
+            // verification at all, in which case nothing shows.
+            idVerification: registering.idVerification ? "unverified" : undefined,
             // The one school a brand-new account has.
             learnerSchools: [REGISTRATION_SCHOOL],
           });
