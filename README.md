@@ -40,7 +40,10 @@ Notes on the file:// approach:
      there is no product picker and no "Don't have an account?" link here.
    - **Which product**, only when the account reaches more than one of
      Parchment, Mastery, and Canvas. One product and this step never appears.
-   - **The password** for the product they picked, with a Forgot password link.
+   - **The password** for the product they picked. Its heading names that
+     product and its mark sits beside it — someone who just chose between three
+     of them can see they landed on the right one before typing a password into
+     it — with a Forgot password link underneath.
    An address with no account goes to registration instead, so being new stops
    being something the user has to notice and self-select. Mastery and Canvas
    reach a page that says plainly this prototype covers Parchment, rather than a

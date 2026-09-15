@@ -309,3 +309,25 @@
   accent-color: var(--button-primary-bg);
   cursor: pointer;
 }
+
+/* Password step: the product's mark beside its heading, so the choice just made
+   is confirmed before a password goes into it. */
+.signin__header--product {
+  flex-direction: row;
+  /* Top-aligned, not centred: the heading wraps to two lines for the longer
+     product names, and centring against the whole block drops the mark to the
+     level of the second line. */
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.signin__header-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.signin__header-text .signin__subtitle {
+  overflow-wrap: anywhere;
+}

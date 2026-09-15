@@ -52,6 +52,7 @@ export default function SignIn({ onSignIn, onRegister }) {
   const [onboarding, setOnboarding] = useState(false);
 
   const products = productsForAccount({ hasMastery, hasCanvas });
+  const productName = products.find((p) => p.id === product)?.name;
   // hasMastery / hasCanvas ride along: once signed in, the services switcher
   // offers every product the account reaches, not just the one they picked.
   const session = {
@@ -172,12 +173,21 @@ export default function SignIn({ onSignIn, onRegister }) {
 
         {step === "password" && (
           <form className="signin__card" onSubmit={submitPassword}>
-            <header className="signin__header">
-              <h1 className="signin__title">Enter your password</h1>
-              <p className="signin__subtitle">
-                Signing in to {products.find((p) => p.id === product)?.name} as{" "}
-                {email || "your account"}.
-              </p>
+            {/* The product is named in the heading and shown as its own mark,
+                so someone who just chose between three of them can see they
+                landed on the right one before typing a password into it. The
+                subtitle carries the email only — the heading has the product
+                covered. */}
+            <header className="signin__header signin__header--product">
+              <ProductMark product={product} size={48} />
+              <div className="signin__header-text">
+                <h1 className="signin__title">
+                  Enter your {productName ?? ""} password
+                </h1>
+                <p className="signin__subtitle">
+                  Signing in as {email || "your account"}.
+                </p>
+              </div>
             </header>
 
             <div className="signin__form">
