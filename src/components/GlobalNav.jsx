@@ -216,17 +216,37 @@ export default function GlobalNav({
         {/* Account item — opens the Account panel */}
         <button
           className={`gnav__account${accountOpen ? " gnav__account--active" : ""}`}
-          title={username}
-          aria-label={`Account: ${username}`}
+          title={verify ? `${username} — ID ${verify.label}` : username}
+          // The status icon adds meaning, so it belongs in the button's name
+          // too; an icon a screen reader cannot hear is decoration.
+          aria-label={
+            verify
+              ? `Account: ${username}. ID status: ${verify.label}`
+              : `Account: ${username}`
+          }
           aria-expanded={accountOpen}
           onClick={() => (accountOpen ? closeAccount() : openAccount())}
         >
           <Avatar kind="pp" initials={initials} />
           {expanded && (
-            <span className="gnav__account-data">
-              <span className="gnav__account-name">{username}</span>
-              <span className="gnav__account-role">{userRole}</span>
-            </span>
+            <>
+              <span className="gnav__account-data">
+                <span className="gnav__account-name">{username}</span>
+                <span className="gnav__account-role">{userRole}</span>
+              </span>
+              {/* A quiet echo of the state the account panel spells out, so a
+                  learner can see where they stand without opening anything.
+                  Expanded rail only: at 40px the collapsed rail has no room
+                  for it beside the avatar. */}
+              {VerifyIcon && (
+                <span
+                  className={`gnav__account-verify gnav__account-verify--${verify.color}`}
+                  aria-hidden="true"
+                >
+                  <VerifyIcon size={18} strokeWidth={2.5} />
+                </span>
+              )}
+            </>
           )}
         </button>
 

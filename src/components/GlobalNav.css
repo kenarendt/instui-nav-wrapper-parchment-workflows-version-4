@@ -159,6 +159,28 @@
   line-height: 1.4;
 }
 
+/* ID verification status, at the right edge of the expanded account item. The
+   colours match the pills in the account panel, so the same state reads the
+   same in both places. `.gnav__account-data` takes the remaining space, which
+   is what pushes this to the edge. */
+.gnav__account-verify {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.gnav__account-verify--success {
+  color: #037d37;
+}
+
+.gnav__account-verify--warning {
+  color: #8f4200;
+}
+
+.gnav__account-verify--danger {
+  color: #a5182a;
+}
+
 /* Nav items */
 .gnav__items {
   list-style: none;
@@ -390,11 +412,16 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* Persona tag, verification pill and its action share one wrapping row. */
+/* One per line: persona tag, then the verification pill, then its action.
+   A wrapping row put two of the three states beside the persona tag and made
+   the third drop below it, so the block changed shape depending on the state.
+   Stacking costs a little height and buys a layout that never moves — and it
+   means the pill can carry the full "Reverification Required" wording rather
+   than being cut to fit beside something else. */
 .gnav__profile-tags {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--space-xs);
   margin-top: 6px;
 }

@@ -140,8 +140,16 @@ ended for the session.
 
 Learners go through an enhanced ID check, uploading a government issued ID. None
 of that process is built here. What the prototype shows is where a learner
-stands afterwards, as a status tag beside their persona tag in the account
-panel, with the action that moves them on.
+stands afterwards, in two places:
+
+- The **account panel**, as a stacked block under the email: persona tag, then
+  the status pill, then the action. One per line, so the block keeps the same
+  shape whichever state is showing — a wrapping row changed shape, because
+  "Reverification Required" is wider than the other two labels.
+- The **expanded nav rail**, as a small icon at the right edge of the account
+  item, in the same colour as the pill. A learner can see where they stand
+  without opening anything. The collapsed rail leaves it out: at 40px there is
+  no room beside the avatar.
 
 Three states, in `src/data/verification.js`:
 
@@ -154,7 +162,9 @@ Three states, in `src/data/verification.js`:
   brand-new account created through registration starts here.
 
 Each state pairs its colour with its own icon and its own words, so none of it
-rests on colour alone, and all three clear 4.5:1 against their own fill.
+rests on colour alone, and all three clear 4.5:1 against their own fill. The
+rail icon adds meaning, so it is named in the account item's accessible label
+too — an icon a screen reader cannot hear is decoration.
 
 Admins have no state here. Their standing comes from the institution that
 granted their access, not from an ID check, so the block is absent on admin
