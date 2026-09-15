@@ -1,11 +1,12 @@
 .pill {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   height: 24px;
   padding: 0 var(--space-sm);
   border-radius: 8px;
   border: 1px solid var(--pill-border-color, #8d959f);
-  background: var(--background-containercolor);
+  background: var(--pill-bg, var(--background-containercolor));
   font-family: var(--fontfamily-base);
   font-size: var(--fontsize-textsm);
   font-weight: var(--fontweight-body-strong);
@@ -22,4 +23,19 @@
 .pill--success {
   --pill-border-color: #03893d;
   --pill-text-color: #037d37;
+  --pill-bg: #f0faf3;
+}
+
+/* Warning and danger carry a tinted fill as well as a border. None of the
+   three rests on colour: each has its own icon and its own words. */
+.pill--warning {
+  --pill-border-color: #c15400;
+  --pill-text-color: #8f4200;
+  --pill-bg: #fdf1e3;
+}
+
+.pill--danger {
+  --pill-border-color: #c3232e;
+  --pill-text-color: #a5182a;
+  --pill-bg: #fdecee;
 }

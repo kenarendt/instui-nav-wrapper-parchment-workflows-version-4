@@ -390,9 +390,50 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* Persona tag, verification pill and its action share one wrapping row. */
+.gnav__profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: 6px;
+}
+
+/* The pill is a button in the prototype, but must look exactly like a pill —
+   no button chrome, no layout of its own. */
+.gnav__verify-pill {
+  display: inline-flex;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.gnav__verify-pill:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.gnav__verify-action {
+  border: none;
+  background: transparent;
+  padding: 2px;
+  font-family: var(--fontfamily-base);
+  font-weight: var(--fontweight-body-strong);
+  font-size: var(--fontsize-textsm);
+  color: var(--text-link-color);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.gnav__verify-action:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
 .gnav__profile-badge {
   display: inline-block;
-  margin-top: 4px;
   padding: 2px 10px;
   border: 1px solid var(--nav-border-color);
   border-radius: 999px;

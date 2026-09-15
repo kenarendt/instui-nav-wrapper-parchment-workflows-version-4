@@ -18,11 +18,16 @@ import {
   ALargeSmall,
   Contrast,
   SlidersHorizontal,
+  ShieldCheck,
+  ShieldOff,
+  TriangleAlert,
 } from "lucide-react";
 import CanvasLogo from "./CanvasLogo.jsx";
 import MasteryLogo from "./MasteryLogo.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
 import SchoolMenu from "./SchoolMenu.jsx";
+import Pill from "./Pill.jsx";
+import { verificationById } from "../data/verification.js";
 import Toggle from "./Toggle.jsx";
 import useDismissOnOutside from "../hooks/useDismissOnOutside.js";
 import { account } from "../data/experiences.js";
@@ -36,6 +41,12 @@ const DEFAULT_ITEMS = [
   { key: "history", label: "History", Icon: Clock },
   { key: "help", label: "Help", Icon: CircleHelp },
 ];
+
+const VERIFY_ICONS = {
+  "shield-check": ShieldCheck,
+  alert: TriangleAlert,
+  "shield-off": ShieldOff,
+};
 
 function Avatar({ kind, initials }) {
   if (kind === "learner") {
@@ -64,6 +75,9 @@ export default function GlobalNav({
   // configures the account across every service rather than anything inside
   // the service on screen.
   onPlatformSettings,
+  // Learner experience only: { state, onCycle }. Admins are vouched for by
+  // their institution, so they have none and this stays undefined.
+  verification,
   // Quick school switching from the institution mark. `schools` is every
   // school this admin can act for inside the service on screen; picking one
   // switches the page to it.
@@ -92,6 +106,9 @@ export default function GlobalNav({
     [schoolBtnRef, schoolMenuRef],
     schoolBtnRef
   );
+
+  const verify = verificationById(verification?.state);
+  const VerifyIcon = verify ? VERIFY_ICONS[verify.icon] : null;
 
   const initials = username
     .split(" ")
@@ -299,7 +316,45 @@ export default function GlobalNav({
               <span className="gnav__profile-text">
                 <span className="gnav__profile-name">{username}</span>
                 <span className="gnav__profile-email">{account.email}</span>
-                <span className="gnav__profile-badge">{userRole}</span>
+                {/* One wrapping row: the persona tag, then the ID verification
+                    state, then its action. "Reverification Required" is wider
+                    than the room left beside the tag in a 300px panel, so the
+                    row wraps rather than the wording being cut to fit — this
+                    text comes from the production design.
+
+                    The pill doubles as the prototype's state cycler. It is the
+                    status, so pressing the status to change the status reads
+                    naturally here, and it keeps the scaffolding out of the
+                    Verify / Reverify action beside it, which is the real
+                    product action. */}
+                <span className="gnav__profile-tags">
+                  <span className="gnav__profile-badge">{userRole}</span>
+
+                  {verify && (
+                    <>
+                      <button
+                        type="button"
+                        className="gnav__verify-pill"
+                        aria-label={`ID status: ${verify.label}. Prototype: press to see the next state`}
+                        onClick={() => verification.onCycle?.()}
+                      >
+                        <Pill color={verify.color}>
+                          {VerifyIcon && (
+                            <VerifyIcon size={14} strokeWidth={2.5} aria-hidden="true" />
+                          )}
+                          {verify.label}
+                        </Pill>
+                      </button>
+                      <button
+                        type="button"
+                        className="gnav__verify-action"
+                        aria-label={`${verify.action} your ID`}
+                      >
+                        {verify.action}
+                      </button>
+                    </>
+                  )}
+                </span>
               </span>
             </div>
           </div>

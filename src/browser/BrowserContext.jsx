@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
+import { nextVerification } from "../data/verification.js";
 
 const BrowserContext = createContext(null);
 
@@ -10,8 +11,8 @@ const nextId = () => `tab-${++counter}`;
  *
  * It also holds three things that behave like saved settings rather than page
  * state: the expanded/collapsed display preference, the `session` (the shape of
- * the signed-in account), and whether the first-run walkthrough is still
- * running. All three live here so every page in every tab agrees about them —
+ * the signed-in account), whether the first-run walkthrough is still running,
+ * and where the learner's ID verification stands. All three live here so every page in every tab agrees about them —
  * the walkthrough especially, since dismissing it on one page must not leave it
  * waiting on another.
  *
@@ -46,6 +47,17 @@ export function BrowserProvider({
     () => Boolean(session.onboarding)
   );
   const dismissOnboarding = useCallback(() => setOnboardingOpen(false), []);
+
+  // Learner ID verification state. Held here rather than in the account panel
+  // so pressing the pill on one page is still true on the next, and so the
+  // panel unmounting on a page change does not reset it.
+  const [idVerification, setIdVerification] = useState(
+    () => session.idVerification
+  );
+  const cycleVerification = useCallback(
+    () => setIdVerification((v) => nextVerification(v)),
+    []
+  );
 
   const openTab = useCallback((tab) => {
     setTabs((prev) => {
@@ -131,6 +143,8 @@ export function BrowserProvider({
     toggleExpandedView,
     onboardingOpen,
     dismissOnboarding,
+    idVerification,
+    cycleVerification,
   };
   return (
     <BrowserContext.Provider value={value}>{children}</BrowserContext.Provider>

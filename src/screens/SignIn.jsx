@@ -50,6 +50,7 @@ export default function SignIn({ onSignIn, onRegister }) {
   const [hasCanvas, setHasCanvas] = useState(false);
   const [noAccount, setNoAccount] = useState(false);
   const [onboarding, setOnboarding] = useState(false);
+  const [idReverify, setIdReverify] = useState(false);
 
   const products = productsForAccount({ hasMastery, hasCanvas });
   const productName = products.find((p) => p.id === product)?.name;
@@ -57,6 +58,10 @@ export default function SignIn({ onSignIn, onRegister }) {
   // offers every product the account reaches, not just the one they picked.
   const session = {
     email, shape, multiSchool, singleService, hasMastery, hasCanvas, onboarding,
+    // Learners are put through an ID check; this is where it stands. A state is
+    // always set here because signing in means the account exists — a brand-new
+    // account, which has never verified, gets none (see App).
+    idVerification: idReverify ? "reverify" : "verified",
   };
 
   const checkEmail = (e) => {
@@ -281,6 +286,17 @@ export default function SignIn({ onSignIn, onRegister }) {
                 label="Has Canvas account"
                 defaultOn={false}
                 onChange={setHasCanvas}
+              />
+            </div>
+
+            <div className="signin__opt">
+              <span className="signin__opt-label">
+                Learner ID needs reverification
+              </span>
+              <Toggle
+                label="Learner ID needs reverification"
+                defaultOn={false}
+                onChange={setIdReverify}
               />
             </div>
 

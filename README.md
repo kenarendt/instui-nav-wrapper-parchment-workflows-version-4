@@ -136,6 +136,35 @@ through, and letting someone open the spotlit menu would cover the popover
 explaining it. Escape and the close button both end it, and once ended it stays
 ended for the session.
 
+## Learner ID verification
+
+Learners go through an enhanced ID check, uploading a government issued ID. None
+of that process is built here. What the prototype shows is where a learner
+stands afterwards, as a status tag beside their persona tag in the account
+panel, with the action that moves them on.
+
+Three states, in `src/data/verification.js`:
+
+- **Verified** (green) — done and still good. It keeps a **Reverify** action
+  anyway, since a learner may need to redo the check after a name or ID change.
+- **Reverification Required** (amber) — was verified, has lapsed. Same action,
+  different urgency.
+- **Not Verified** (red) — never done. The action is **Verify**, not Reverify:
+  telling someone to redo something they have never done is confusing. A
+  brand-new account created through registration starts here.
+
+Each state pairs its colour with its own icon and its own words, so none of it
+rests on colour alone, and all three clear 4.5:1 against their own fill.
+
+Admins have no state here. Their standing comes from the institution that
+granted their access, not from an ID check, so the block is absent on admin
+pages — including for an account that is both.
+
+**Pressing the pill cycles to the next state**, which is prototype scaffolding
+rather than product behaviour. It sits on the pill so it stays clear of the
+Verify / Reverify action beside it, which is the real one. The state is held in
+`BrowserContext`, so it holds across pages and tabs.
+
 ## The prototype panel
 
 It sits on the first sign-in step, since everything it varies is settled when
@@ -143,7 +172,8 @@ the email is checked. It stands in for the account lookup: the shape of the
 Parchment account (admin plus learner, admin only, learner only), whether the
 admin covers several schools, whether they reach one service or four, whether
 the address also reaches Mastery or Canvas, whether the first-run walkthrough
-runs, and whether it has an account at all. A line underneath says in plain words what the current settings will do.
+runs, where the learner's ID verification starts, and whether it has an account
+at all. A line underneath says in plain words what the current settings will do.
 
 ## School branding
 

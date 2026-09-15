@@ -106,6 +106,8 @@ export default function Wrapper({
     openTab,
     onboardingOpen,
     dismissOnboarding,
+    idVerification,
+    cycleVerification,
   } = useBrowser();
 
   const service = serviceId ? serviceById(serviceId) : undefined;
@@ -190,6 +192,14 @@ export default function Wrapper({
         onAddSchool={school ? ctx?.onAdd : undefined}
         // A side trip rather than a service, so it opens its own tab and
         // leaves the work behind it intact. Deduped, so it never opens twice.
+        // Learner experience only. An admin's standing comes from the
+        // institution that gave them access, not from an ID check, so the
+        // block would be meaningless on an admin page.
+        verification={
+          experienceType === "learner" && idVerification
+            ? { state: idVerification, onCycle: cycleVerification }
+            : undefined
+        }
         onPlatformSettings={() =>
           openTab({
             kind: "platformSettings",

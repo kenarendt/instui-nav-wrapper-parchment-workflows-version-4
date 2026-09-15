@@ -45,6 +45,9 @@ export default function App() {
             product: "parchment",
             shape: "learnerOnly",
             newAccount: true,
+            // Never been through the ID check, which is exactly what the
+            // "Not Verified" state is for.
+            idVerification: "unverified",
             // The one school a brand-new account has.
             learnerSchools: [REGISTRATION_SCHOOL],
           });
