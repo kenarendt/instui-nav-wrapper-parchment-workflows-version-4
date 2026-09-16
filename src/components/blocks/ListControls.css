@@ -1,0 +1,154 @@
+.lc {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-md);
+}
+
+.lc__group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.lc__wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.lc__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 var(--space-sm);
+  border: 1px solid var(--nav-border-color);
+  border-radius: var(--radius-button);
+  background: var(--background-containercolor);
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  color: var(--heading-basecolor);
+  cursor: pointer;
+}
+
+.lc__btn:hover {
+  background: #f7f9fb;
+}
+
+.lc__btn--open {
+  border-color: var(--focus-outline-color);
+}
+
+.lc__btn:focus-visible,
+.lc__option:focus-visible,
+.lc__link:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+.lc__btn-label {
+  font-weight: var(--fontweight-body-strong);
+}
+
+.lc__btn-summary {
+  color: var(--text-mutedcolor);
+}
+
+.lc__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+  max-width: 320px;
+  padding: var(--space-xs);
+  background: var(--background-containercolor);
+  border: 1px solid var(--nav-border-color);
+  border-radius: var(--radius-navitem);
+  box-shadow: 0 12px 32px rgba(15, 23, 33, 0.18);
+}
+
+.lc__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  min-height: 38px;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-navitem);
+  background: transparent;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  color: var(--heading-basecolor);
+  text-align: left;
+  cursor: pointer;
+}
+
+.lc__option:hover {
+  background: #eef1f8;
+}
+
+/* Checkbox and radio marks, drawn rather than native so they match the rest of
+   the prototype's controls. Both carry a tick when on, so the state does not
+   rest on fill colour alone. */
+.lc__box,
+.lc__radio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 1.5px solid #8d959f;
+  background: var(--background-containercolor);
+  color: #fff;
+}
+
+.lc__box {
+  border-radius: 4px;
+}
+
+.lc__radio {
+  border-radius: 999px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--heading-basecolor);
+}
+
+.lc__box--on {
+  background: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
+}
+
+.lc__menu-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--nav-border-color);
+}
+
+.lc__link {
+  border: none;
+  background: transparent;
+  padding: var(--space-xs);
+  font-family: var(--fontfamily-base);
+  font-weight: var(--fontweight-body-strong);
+  font-size: var(--fontsize-textsm);
+  color: var(--text-link-color);
+  cursor: pointer;
+}
+
+.lc__count {
+  margin: 0;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  color: var(--text-mutedcolor);
+}

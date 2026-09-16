@@ -79,10 +79,9 @@ Notes on the file:// approach:
 5. On the learner side the school switcher chooses whose credentials are on
    screen, replacing the old tab bar. Its menu carries **Add another school** at
    the foot, below a divider, since someone with that menu open is already
-   deciding which school. The two views that span schools — **All Credentials**
-   and **Other Badges** — are nav items rather than tabs, because neither belongs
-   to a school; they show no band and no switcher, which is the honest signal
-   that they are not school-scoped.
+   deciding which school. The view that spans schools, **All Credentials**, is a
+   nav item rather than a tab, because it belongs to no school; it shows no band
+   and no switcher, which is the honest signal that it is not school-scoped.
 6. All admin service dashboards share one common dashboard pattern.
 7. Platform Settings sits in the nav account menu, under Account Settings. It
    opens in its own tab, since it is a side trip rather than a service.
@@ -135,6 +134,45 @@ The page underneath is inert while it runs. The step counter promises a path
 through, and letting someone open the spotlit menu would cover the popover
 explaining it. Escape and the close button both end it, and once ended it stays
 ended for the session.
+
+## All Credentials
+
+One page for everything the learner holds. **School credentials** lists the
+credentials and badges from every school they have connected; **Other badges**
+is a second section below it for what they earned outside any school. That used
+to be two nav items, and four outside badges did not carry a page of their own.
+
+It lists **17 items**, which is what the credential-type donut claims — 12 at
+Bambusa, 5 at Panda. A school's badges count towards its total, so the list
+includes them rather than leaving them to the school view. The donut's segments
+are counted from the rows on screen, filters included, so the chart cannot drift
+from the list beside it.
+
+Each section has its own filters and sort (`components/blocks/ListControls.jsx`):
+
+- Credentials filter by school and by credential type; badges filter by issuer,
+  since a school filter makes no sense for them.
+- Sort by most recently earned (the default), name, or credential type. Badges
+  offer issuer in place of type, which would be the same value for all of them.
+- Every filter starts with everything selected, and a count line reads "Showing
+  12 of 17" once anything is hidden. Without that line, nothing on screen says
+  the list is incomplete.
+
+Every item carries a stable `id` and an ISO `earned` date. The id keeps a
+selection intact through filtering and sorting; the ISO date is what makes
+"most recently earned" sortable, which a display string like "May 29, 2026"
+is not.
+
+## Building a record
+
+Each row has a checkbox, and the selection spans both sections — a record can
+mix a diploma with a badge earned somewhere else. One or more selected enables
+**Create a record** in the page header, which names the count. Selected rows are
+tinted and marked on their leading edge, so the state survives scanning a long
+list rather than resting on the checkbox alone.
+
+The button opens the existing record flow, which has its own item picker and
+does not yet inherit the selection.
 
 ## Learner ID verification
 

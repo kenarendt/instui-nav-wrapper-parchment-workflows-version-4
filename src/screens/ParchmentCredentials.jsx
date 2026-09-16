@@ -22,6 +22,7 @@ import Select from "../components/Select.jsx";
 import DonutChart from "../components/blocks/DonutChart.jsx";
 import AINote from "../components/blocks/AINote.jsx";
 import RecordCard from "../components/blocks/RecordCard.jsx";
+import ListControls from "../components/blocks/ListControls.jsx";
 import RecordDetail from "./RecordDetail.jsx";
 import ShareModal from "../components/ShareModal.jsx";
 import CreateRecordFlow from "../components/CreateRecordFlow.jsx";
@@ -33,37 +34,101 @@ import {
   SCHOOLS,
   OTHER_BADGES,
   allCredentials,
-  ALL_DONUT,
+  donutFor,
 } from "../data/credentials.js";
 import "./ParchmentCredentials.css";
 
 /**
- * The dashboard shows one school at a time, so the two views that span schools
- * are nav items rather than tabs. Neither belongs to a school: "All
- * credentials" is the flat list across every school, and "Other badges" is
- * what the learner earned outside any of them. Putting them beside My Records
- * groups them correctly — things the learner owns, one level up from any single
- * school.
+ * The dashboard shows one school at a time, so the view that spans schools is a
+ * nav item rather than a tab. "All Credentials" is the flat list across every
+ * school, and the badges earned outside any school are a second section on that
+ * same page rather than a page of their own — a learner comparing what they
+ * hold wants it in one place, and four badges did not carry a nav item.
  */
 const NAV_ITEMS = [
   { key: "dashboard", label: "Dashboard", Icon: LayoutDashboard },
   { key: "records", label: "My Records", Icon: FileStack },
   { key: "allCredentials", label: "All Credentials", Icon: ScrollText },
-  { key: "otherBadges", label: "Other Badges", Icon: Award },
   { key: "orders", label: "Orders", Icon: Receipt },
   { key: "settings", label: "Settings", Icon: Settings },
 ];
+
+const CRED_SORTS = [
+  { value: "recent", label: "Most recently earned" },
+  { value: "name", label: "Name (A–Z)" },
+  { value: "type", label: "Credential type (A–Z)" },
+];
+
+/* Badges are all one type, so sorting by type would do nothing. Issuer is the
+   dimension that actually varies across them. */
+const BADGE_SORTS = [
+  { value: "recent", label: "Most recently earned" },
+  { value: "name", label: "Name (A–Z)" },
+  { value: "issuer", label: "Issuer (A–Z)" },
+];
+
+const SORTERS = {
+  recent: (a, b) => b.earned.localeCompare(a.earned),
+  name: (a, b) => a.title.localeCompare(b.title),
+  type: (a, b) => (a.type ?? "").localeCompare(b.type ?? "") || a.title.localeCompare(b.title),
+  issuer: (a, b) => a.issuer.localeCompare(b.issuer) || a.title.localeCompare(b.title),
+};
+
+/** Distinct values of one field, in the order they first appear. */
+function optionsFor(items, field) {
+  return [...new Set(items.map((i) => i[field]))].map((v) => ({
+    value: v,
+    label: v,
+  }));
+}
 
 const THUMB_ICON = {
   diploma: FileText,
   verification: ShieldCheck,
   certificate: Award,
+  // School badges appear in the All Credentials list alongside credentials, so
+  // they need a thumbnail there too — without this they fell back to the
+  // document icon and read as paperwork.
+  badge: BadgeCheck,
 };
 
-function CredentialRow({ cred, showSchool }) {
+/**
+ * SelectBox — the per-row checkbox on All Credentials.
+ *
+ * Named for the item it selects rather than "Select", because a list of
+ * twenty-one identically named checkboxes is unusable to anyone reading them
+ * one at a time.
+ *
+ * The title alone is not enough: a diploma and its verification share one
+ * title, so the name also carries the type and where it came from. That is the
+ * smallest addition that makes every checkbox on the page distinct.
+ */
+function selectLabel(item) {
+  const kind = item.type ?? "Badge";
+  const from = item.school ?? item.issuer;
+  return `Select ${item.title}, ${kind} from ${from}`;
+}
+
+function SelectBox({ item, selected, onToggle }) {
+  return (
+    <label className="cred-row__select">
+      <input
+        type="checkbox"
+        checked={selected}
+        aria-label={selectLabel(item)}
+        onChange={() => onToggle(item.id)}
+      />
+    </label>
+  );
+}
+
+function CredentialRow({ cred, showSchool, selected, onToggle }) {
   const Icon = THUMB_ICON[cred.thumb] || FileText;
   return (
-    <div className="cred-row">
+    <div className={`cred-row${selected ? " cred-row--selected" : ""}`}>
+      {onToggle && (
+        <SelectBox item={cred} selected={selected} onToggle={onToggle} />
+      )}
       <div className="cred-row__thumb" aria-hidden="true">
         <Icon size={26} strokeWidth={1.5} />
       </div>
@@ -80,9 +145,12 @@ function CredentialRow({ cred, showSchool }) {
   );
 }
 
-function BadgeRow({ badge }) {
+function BadgeRow({ badge, selected, onToggle }) {
   return (
-    <div className="cred-row">
+    <div className={`cred-row${selected ? " cred-row--selected" : ""}`}>
+      {onToggle && (
+        <SelectBox item={badge} selected={selected} onToggle={onToggle} />
+      )}
       <div className="cred-row__thumb cred-row__thumb--badge" aria-hidden="true">
         <BadgeCheck size={26} strokeWidth={1.5} />
       </div>
@@ -175,6 +243,32 @@ export default function ParchmentCredentials() {
   const [active, setActive] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
 
+  // All Credentials: what is on screen, and what the learner has picked out of
+  // it. Filters start with everything selected — someone opening the page wants
+  // all of their credentials, and narrowing is what the controls are for.
+  const credItems = allCredentials(schools);
+  const [credSchools, setCredSchools] = useState(() => [
+    ...new Set(credItems.map((c) => c.school)),
+  ]);
+  const [credTypes, setCredTypes] = useState(() => [
+    ...new Set(credItems.map((c) => c.type)),
+  ]);
+  const [credSort, setCredSort] = useState("recent");
+  const [badgeIssuers, setBadgeIssuers] = useState(() => [
+    ...new Set(OTHER_BADGES.map((b) => b.issuer)),
+  ]);
+  const [badgeSort, setBadgeSort] = useState("recent");
+
+  // Selection spans both sections: a record can mix a diploma with a badge
+  // earned somewhere else, so one set rather than one per section.
+  const [selected, setSelected] = useState(() => new Set());
+  const toggleSelected = (id) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
   const navItems = NAV_ITEMS.map((item) => ({
     ...item,
     active: item.key === (openedRecord ? "records" : page),
@@ -248,13 +342,27 @@ export default function ParchmentCredentials() {
     );
   }
 
-  // ── Cross-school pages ───────────────────────────────────────────
-  // These two used to be tabs beside the schools, which put them inside a
-  // control that otherwise meant "which school". Neither belongs to a school,
-  // so both became pages in the nav rail. They carry no school band and no
-  // switcher, which is the honest signal that they are not school-scoped.
-  if (page === "allCredentials" || page === "otherBadges") {
-    const isBadges = page === "otherBadges";
+  // ── All Credentials ──────────────────────────────────────────────
+  // One page for everything the learner holds: their schools' credentials and
+  // badges in the first section, the badges they earned outside any school in
+  // the second. It was two nav items; four outside badges did not carry a page
+  // of their own, and a learner comparing what they hold wants it together.
+  //
+  // No school band and no school switcher here, which is the honest signal that
+  // this page is not scoped to one school.
+  if (page === "allCredentials") {
+    const filtered = (items, filters, sortKey) =>
+      items
+        .filter((i) => filters.every(([field, allowed]) => allowed.includes(i[field])))
+        .sort(SORTERS[sortKey]);
+
+    const creds = filtered(
+      credItems,
+      [["school", credSchools], ["type", credTypes]],
+      credSort
+    );
+    const badges = filtered(OTHER_BADGES, [["issuer", badgeIssuers]], badgeSort);
+
     return (
       <Wrapper
         navProps={{
@@ -266,49 +374,136 @@ export default function ParchmentCredentials() {
           productLogo: "parchment",
         }}
         experienceType="learner"
-        title={isBadges ? "Other badges" : "All credentials"}
-        description={
-          isBadges
-            ? "Badges you've earned outside of your schools."
-            : "Everything you've earned, across every school you've connected."
+        title="All credentials"
+        description="Everything you've earned, across every school you've connected."
+        actions={
+          <Button
+            variant="primary"
+            icon={Plus}
+            disabled={selected.size === 0}
+            onClick={() => setCreateOpen(true)}
+          >
+            {selected.size > 0
+              ? `Create a record (${selected.size})`
+              : "Create a record"}
+          </Button>
         }
         trailing={
-          !isBadges && (
-            <Panel
-              title="Credentials"
-              subtitle="The types of credentials you've earned"
-              showMenu
-            >
-              <DonutChart
-                segments={ALL_DONUT.segments}
-                centerLabel={ALL_DONUT.total}
-              />
-              <div className="pc-center pc-collection">
-                <Button variant="secondary">Create a collection</Button>
-              </div>
-            </Panel>
-          )
+          <Panel
+            title="Credential types"
+            subtitle={
+              creds.length === credItems.length
+                ? "Everything you hold"
+                : "Matching your filters"
+            }
+            showMenu
+          >
+            {/* Counted from the rows on screen, filters included, so the chart
+                and the list can never disagree. */}
+            <DonutChart {...donutFor(creds)} centerLabel={String(creds.length)} />
+            <div className="pc-center pc-collection">
+              <Button variant="secondary">Create a collection</Button>
+            </div>
+          </Panel>
         }
       >
-        {/* No panel title: the page heading directly above already names this,
-            and a panel is the only thing on the page. The subtitle earns its
-            place by saying something the heading does not. */}
         <Panel
-          subtitle={
-            isBadges
-              ? "Issued by organizations other than your schools."
-              : "Sorted with the most recent first."
-          }
+          title="School credentials"
+          subtitle="Issued by the schools you've connected."
           showMenu
         >
-          <div className="cred-list">
-            {isBadges
-              ? OTHER_BADGES.map((b, i) => <BadgeRow key={i} badge={b} />)
-              : allCredentials().map((c, i) => (
-                  <CredentialRow key={i} cred={c} showSchool />
-                ))}
-          </div>
+          <ListControls
+            noun="credentials"
+            shown={creds.length}
+            total={credItems.length}
+            filters={[
+              {
+                id: "cred-school",
+                label: "School",
+                options: optionsFor(credItems, "school"),
+                selected: credSchools,
+                onChange: setCredSchools,
+              },
+              {
+                id: "cred-type",
+                label: "Type",
+                options: optionsFor(credItems, "type"),
+                selected: credTypes,
+                onChange: setCredTypes,
+              },
+            ]}
+            sort={{ value: credSort, options: CRED_SORTS, onChange: setCredSort }}
+          />
+          {creds.length === 0 ? (
+            <p className="pc-muted">
+              No credentials match these filters. Widen the school or type
+              filter to see more.
+            </p>
+          ) : (
+            <div className="cred-list">
+              {creds.map((c) => (
+                <CredentialRow
+                  key={c.id}
+                  cred={c}
+                  showSchool
+                  selected={selected.has(c.id)}
+                  onToggle={toggleSelected}
+                />
+              ))}
+            </div>
+          )}
         </Panel>
+
+        <Panel
+          title="Other badges"
+          subtitle="Issued by organizations other than your schools."
+          showMenu
+        >
+          <ListControls
+            noun="badges"
+            shown={badges.length}
+            total={OTHER_BADGES.length}
+            filters={[
+              {
+                id: "badge-issuer",
+                label: "Issuer",
+                options: optionsFor(OTHER_BADGES, "issuer"),
+                selected: badgeIssuers,
+                onChange: setBadgeIssuers,
+              },
+            ]}
+            sort={{ value: badgeSort, options: BADGE_SORTS, onChange: setBadgeSort }}
+          />
+          {badges.length === 0 ? (
+            <p className="pc-muted">
+              No badges match this filter. Widen the issuer filter to see more.
+            </p>
+          ) : (
+            <div className="cred-list">
+              {badges.map((b) => (
+                <BadgeRow
+                  key={b.id}
+                  badge={b}
+                  selected={selected.has(b.id)}
+                  onToggle={toggleSelected}
+                />
+              ))}
+            </div>
+          )}
+        </Panel>
+
+        {createOpen && (
+          <CreateRecordFlow
+            onClose={() => setCreateOpen(false)}
+            onCreate={(rec) => {
+              setRecords((list) => [rec, ...list]);
+              setCreateOpen(false);
+              setSelected(new Set());
+              setPage("records");
+              setOpenedRecord(rec);
+            }}
+          />
+        )}
       </Wrapper>
     );
   }
@@ -424,7 +619,7 @@ export default function ParchmentCredentials() {
         onSelect: (picked) => setActive(picked.id),
         onAdd: () => setAddOpen(true),
       }}
-      title="Parchment Credentials"
+      title="Parchment Credential Dashboard"
       actions={
         <>
           <Button variant="secondary">Customize Dashboard</Button>
