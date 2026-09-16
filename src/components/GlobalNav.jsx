@@ -30,6 +30,7 @@ import Pill from "./Pill.jsx";
 import { verificationById } from "../data/verification.js";
 import Toggle from "./Toggle.jsx";
 import useDismissOnOutside from "../hooks/useDismissOnOutside.js";
+import { useBrowser } from "../browser/BrowserContext.jsx";
 import { account } from "../data/experiences.js";
 import "./GlobalNav.css";
 
@@ -88,7 +89,10 @@ export default function GlobalNav({
   onAddSchool,
   onLogout,
 }) {
-  const [expanded, setExpanded] = useState(false);
+  // Open or closed is a display preference held by the shell, not page state:
+  // GlobalNav remounts on every page change, so a local copy would forget that
+  // the user had collapsed it.
+  const { navExpanded: expanded, setNavExpanded: setExpanded } = useBrowser();
   const [accountOpen, setAccountOpen] = useState(false);
   const [schoolOpen, setSchoolOpen] = useState(false);
   const schoolBtnRef = useRef(null);
@@ -138,11 +142,18 @@ export default function GlobalNav({
     >
       <div className="gnav__rail">
         {/* Top-right collapse toggle (expanded rail only; hidden while the
-            account panel is open, which carries its own toggle) */}
+            account panel is open, which carries its own toggle).
+
+            It does exactly what the control at the bottom of the rail does, so
+            its name says where it is. Two buttons reading "Collapse sidebar"
+            were indistinguishable in a list of buttons — which mattered little
+            while the rail opened closed by default, and matters now that it
+            opens open. The bottom control keeps the plain name because it has
+            the visible label. */}
         {expanded && !accountOpen && (
           <button
             className="gnav__toggle"
-            aria-label="Collapse sidebar"
+            aria-label="Collapse sidebar, top of nav"
             onClick={toggleExpanded}
           >
             <PanelLeftClose size={20} strokeWidth={2} />

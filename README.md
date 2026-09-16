@@ -204,6 +204,22 @@ school sets this itself and can pick anything, so nothing relies on the colour
 to be understood. The crest, the name and the location all identify the school
 without it.
 
+## The nav rail opens expanded
+
+Every page inside the app opens with the rail showing its labels, and collapsing
+is something the user opts into. The rail names the service you are in and the
+items belonging to it, so watching those names change is a large part of what
+makes switching services read as having gone somewhere.
+
+That state lives in `BrowserContext`, not in `GlobalNav`, because `GlobalNav`
+remounts on every page change: held locally, a user who collapsed the rail would
+find it open again the moment they switched service.
+
+"By default" means when there is room. An expanded rail is 264px, so below a
+760px window it starts collapsed, and shrinking the window past that collapses
+it. Widening again deliberately does not reopen it — by then the state may be
+the user's own choice rather than this default.
+
 ## Defaults live in one place
 
 `PREFERENCES` in `src/data/experiences.js` holds the default service and the

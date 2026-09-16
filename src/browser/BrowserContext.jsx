@@ -1,7 +1,10 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { nextVerification } from "../data/verification.js";
 
 const BrowserContext = createContext(null);
+
+// Below this, an expanded 264px rail leaves too little room for the page.
+const NAV_OPEN_MIN_WIDTH = 760;
 
 let counter = 0;
 const nextId = () => `tab-${++counter}`;
@@ -10,9 +13,10 @@ const nextId = () => `tab-${++counter}`;
  * BrowserProvider — owns the simulated browser's tab state.
  *
  * It also holds three things that behave like saved settings rather than page
- * state: the expanded/collapsed display preference, the `session` (the shape of
- * the signed-in account), whether the first-run walkthrough is still running,
- * and where the learner's ID verification stands. All three live here so every page in every tab agrees about them —
+ * state: the two display preferences (the content width, and whether the nav
+ * rail is open), the `session` (the shape of the signed-in account), whether the
+ * first-run walkthrough is still running, and where the learner's ID
+ * verification stands. All three live here so every page in every tab agrees about them —
  * the walkthrough especially, since dismissing it on one page must not leave it
  * waiting on another.
  *
@@ -40,6 +44,37 @@ export function BrowserProvider({
     () => setExpandedView((v) => !v),
     []
   );
+
+  // Whether the nav rail shows its labels. Open by default: the rail names the
+  // service you are in and the items belonging to it, and watching those names
+  // change is how switching services reads as having gone somewhere. Collapsing
+  // is something the user opts into.
+  //
+  // It lives here rather than in GlobalNav because GlobalNav remounts on every
+  // page change — held locally, a user who collapsed the rail would find it
+  // open again the moment they switched service.
+  //
+  // "By default" means when there is room. An expanded rail is 264px, so on a
+  // narrow window it leaves too little for the page beside it and the content
+  // squeezes to nothing.
+  const [navExpanded, setNavExpanded] = useState(
+    () => typeof window === "undefined" || window.innerWidth >= NAV_OPEN_MIN_WIDTH
+  );
+  const toggleNavExpanded = useCallback(
+    () => setNavExpanded((v) => !v),
+    []
+  );
+
+  // Collapse it if the window gets too narrow for both. Deliberately one-way:
+  // widening again does not reopen it, because by then the state may be the
+  // user's own choice rather than this default.
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth < NAV_OPEN_MIN_WIDTH) setNavExpanded(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   // First-run walkthrough. Starts open only if sign-in asked for it, and once
   // dismissed stays dismissed for the rest of the session.
@@ -141,6 +176,9 @@ export function BrowserProvider({
     focusTab,
     expandedView,
     toggleExpandedView,
+    navExpanded,
+    setNavExpanded,
+    toggleNavExpanded,
     onboardingOpen,
     dismissOnboarding,
     idVerification,
