@@ -27,6 +27,14 @@
  * is not something an admin needs at the point of choosing one, and the
  * Pathways branding is being retired.
  *
+ * Each service also carries a `search` block. Global search is per service, not
+ * per platform: an admin in Diploma Services is looking for a diploma, and
+ * offering them every field Receive needs would be noise. So the placeholder,
+ * the supporting line and the advanced fields all belong to the service.
+ *
+ * Field types the advanced modal knows: text, date, select (with `options`),
+ * and checks (a row of checkboxes). Anything else needs adding there too.
+ *
  * Services carry no rollup count for a cross-service surface. Aggregating a
  * figure like "12 open orders" above the service level means calling into every
  * service before the page can paint, which the API cannot do cheaply. Counts
@@ -112,6 +120,39 @@ export const SERVICES = {
     // Schools this admin administers within this service. Deliberately
     // different per service — the point of scoping schools to the service.
     schools: ["bambusa", "panda", "meridian", "elbert"],
+    search: {
+      note: "Find learners, credentials, and orders across Transcript Services.",
+      placeholder: "Try a name, DOB, or order ID",
+      sections: [
+      {
+        title: "Search learner details",
+        icon: "id",
+        fields: [
+          { label: "First Name", type: "text" },
+          { label: "Last Name", type: "text" },
+          { label: "Verified ID", type: "text" },
+          { label: "Date of Birth", type: "date" },
+          { label: "Grad/Leave Year", type: "text" },
+          { label: "Email", type: "text" },
+        ],
+      },
+      {
+        title: "Search order details",
+        icon: "doc",
+        fields: [
+          { label: "Order ID", type: "text" },
+          { label: "Credential Type", type: "select", options: ["Transcript", "Diploma", "Certificate", "Verification"] },
+          { label: "Status", type: "select", options: ["New", "In progress", "On hold", "Fulfilled", "Cancelled"] },
+          { label: "Delivery Method", type: "select", options: ["Electronic", "Mail", "Pickup"] },
+          { label: "Order(s) Placed By", type: "select", options: ["Anyone", "The learner", "A third party", "This school"] },
+          { label: "Destination", type: "text" },
+          { label: "Select Date Range", type: "select", options: ["Date ordered", "Date fulfilled", "Date updated"] },
+          { label: "Start Date (From)", type: "date" },
+          { label: "End Date (To)", type: "date" },
+        ],
+      },
+      ],
+    },
     dashboard: {
       openOrders: 12,
       metrics: [
@@ -133,6 +174,39 @@ export const SERVICES = {
     icon: "award",
     description: "Issue digital and printed diplomas.",
     schools: ["bambusa", "panda"],
+    search: {
+      note: "Find learners and diplomas across Diploma Services.",
+      placeholder: "Try a name, DOB, or diploma ID",
+      sections: [
+      {
+        title: "Search learner details",
+        icon: "id",
+        fields: [
+          { label: "First Name", type: "text" },
+          { label: "Last Name", type: "text" },
+          { label: "Verified ID", type: "text" },
+          { label: "Date of Birth", type: "date" },
+          { label: "Grad/Leave Year", type: "text" },
+          { label: "Email", type: "text" },
+        ],
+      },
+      {
+        title: "Search diploma details",
+        icon: "doc",
+        fields: [
+          { label: "Diploma ID", type: "text" },
+          { label: "Award or Degree", type: "text" },
+          { label: "Status", type: "select", options: ["Ready to issue", "Issued", "Reprint requested", "Returned"] },
+          { label: "Delivery Method", type: "select", options: ["Digital", "Printed", "Digital and printed"] },
+          { label: "Issue Event", type: "select", options: ["Any event", "Spring 2026", "Winter 2025", "Spring 2025"] },
+          { label: "Print Batch", type: "text" },
+          { label: "Select Date Range", type: "select", options: ["Date issued", "Date requested", "Date returned"] },
+          { label: "Start Date (From)", type: "date" },
+          { label: "End Date (To)", type: "date" },
+        ],
+      },
+      ],
+    },
     dashboard: {
       openOrders: 187,
       metrics: [
@@ -154,6 +228,39 @@ export const SERVICES = {
     description:
       "Enroll learners into dual enrollment courses along with comprehensive enrollment management tools.",
     schools: ["meridian", "elbert", "bambusa"],
+    search: {
+      note: "Find learners, applications, and courses across Dual Enrollment.",
+      placeholder: "Try a name, DOB, or application ID",
+      sections: [
+      {
+        title: "Search learner details",
+        icon: "id",
+        fields: [
+          { label: "First Name", type: "text" },
+          { label: "Last Name", type: "text" },
+          { label: "Verified ID", type: "text" },
+          { label: "Date of Birth", type: "date" },
+          { label: "Grad/Leave Year", type: "text" },
+          { label: "Email", type: "text" },
+        ],
+      },
+      {
+        title: "Search enrollment details",
+        icon: "doc",
+        fields: [
+          { label: "Application ID", type: "text" },
+          { label: "Partner Course", type: "text" },
+          { label: "Term", type: "select", options: ["Any term", "Fall 2026", "Spring 2026", "Fall 2025"] },
+          { label: "Status", type: "select", options: ["New", "Under review", "Approved", "Waitlisted", "Denied"] },
+          { label: "Instructor", type: "text" },
+          { label: "Partner School", type: "text" },
+          { label: "Select Date Range", type: "select", options: ["Date applied", "Date decided", "Date enrolled"] },
+          { label: "Start Date (From)", type: "date" },
+          { label: "End Date (To)", type: "date" },
+        ],
+      },
+      ],
+    },
     dashboard: {
       openOrders: 3,
       metrics: [
@@ -177,6 +284,48 @@ export const SERVICES = {
     // One school only. A single-school service shows no switcher on the mark,
     // so moving between services can change whether that control exists.
     schools: ["bambusa"],
+    search: {
+      note: "Find learners, documents, and orders across Receive.",
+      placeholder: "Try a name, DOB, or email",
+      sections: [
+      {
+        title: "Search learner details",
+        icon: "id",
+        fields: [
+          { label: "First Name", type: "text" },
+          { label: "Last Name", type: "text" },
+          { label: "Verified ID", type: "text" },
+          { label: "Date of Birth", type: "date" },
+          { label: "Grad/Leave Year", type: "text" },
+          { label: "Email", type: "text" },
+        ],
+      },
+      {
+        title: "Search document details",
+        icon: "doc",
+        fields: [
+          { label: "School/Organization Name", type: "text" },
+          { label: "Credential Type", type: "select", options: ["Transcript", "Diploma", "Certificate", "Verification"] },
+          { label: "Document ID", type: "text" },
+          { label: "Status", type: "select", options: ["New", "In review", "Processed", "Flagged"] },
+          { label: "Delivery Method", type: "select", options: ["Electronic", "Mail", "Upload"] },
+          { label: "Order(s) Placed By", type: "select", options: ["Anyone", "The learner", "A third party", "Another school"] },
+          { label: "Select Date Range", type: "select", options: ["Date ordered", "Date received", "Date processed"] },
+          { label: "Start Date (From)", type: "date" },
+          { label: "End Date (To)", type: "date" },
+        ],
+      },
+      {
+        title: "Receive options",
+        icon: "inbox",
+        fields: [
+          { label: "Workflow Name", type: "select", options: ["Undergraduate academic transcripts", "Graduate applications", "Transfer credit review"] },
+          { label: "Applicant ID", type: "text" },
+          { label: "Status", type: "checks", options: ["New", "Complete", "Archived"] },
+        ],
+      },
+      ],
+    },
     dashboard: {
       openOrders: 4,
       metrics: [

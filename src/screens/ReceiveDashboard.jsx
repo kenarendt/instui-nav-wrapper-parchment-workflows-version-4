@@ -20,8 +20,8 @@ import "./ReceiveDashboard.css";
 
 const NAV_ITEMS = [
   { key: "dashboard", label: "Dashboard", Icon: LayoutDashboard, active: true },
-  { key: "documents", label: "Documents", Icon: Cloud },
-  { key: "workflows", label: "Workflows", Icon: ClipboardList },
+  { key: "documents", label: "Parchment Cloud", Icon: Cloud },
+  { key: "workflows", label: "Orders", Icon: ClipboardList },
   { key: "reports", label: "Reports", Icon: FileText },
   { key: "settings", label: "Settings", Icon: Settings },
 ];
@@ -56,11 +56,6 @@ export default function ReceiveDashboard() {
       experienceType="admin"
       serviceId="receive"
       title="Receive Dashboard"
-      actions={
-        <>
-          <Button variant="secondary">Customize Dashboard</Button>
-        </>
-      }
       trailing={trailing}
     >
       {/* Workspace */}

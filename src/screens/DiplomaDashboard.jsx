@@ -50,11 +50,6 @@ export default function DiplomaDashboard() {
       experienceType="admin"
       serviceId="diploma"
       title="Diploma Services Dashboard"
-      actions={
-        <>
-          <Button variant="secondary">Customize Dashboard</Button>
-        </>
-      }
       trailing={trailing}
     >
       {/* Workspace */}

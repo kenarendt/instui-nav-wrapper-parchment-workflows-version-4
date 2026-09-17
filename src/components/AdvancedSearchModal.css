@@ -1,0 +1,322 @@
+/* Same overlay treatment as the share modal — one scrim, one dialog surface,
+   so the prototype never has two kinds of modal. */
+.asm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 24px;
+  overflow-y: auto;
+  background: rgba(15, 23, 33, 0.45);
+}
+
+/* Wider than the share modal: this carries two columns of paired fields, and
+   forcing 18 of them into 560px would make the dialog taller than the window. */
+.asm-box {
+  width: 100%;
+  max-width: 960px;
+  background: var(--background-containercolor);
+  border-radius: var(--radius-card-lg);
+  box-shadow: 0 24px 64px rgba(15, 23, 33, 0.3);
+  padding: var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.asm__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.asm__title {
+  margin: 0;
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: var(--fontsize-textxl);
+  color: var(--heading-basecolor);
+}
+
+.asm__sub {
+  margin: 2px 0 0;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  color: var(--text-mutedcolor);
+}
+
+.asm__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.asm__cols {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xl);
+}
+
+.asm__sections {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--space-xl);
+  min-width: 0;
+}
+
+/* A fieldset, not a div: the section title is the accessible name for the
+   fields inside it, which is what makes "Status" unambiguous when two
+   sections both have one. */
+.asm__section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.asm__section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0 0 var(--space-md);
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: var(--fontsize-textbase);
+  color: var(--heading-basecolor);
+}
+
+.asm__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.asm__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.asm__label {
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  font-weight: var(--fontweight-body-strong);
+  color: var(--heading-basecolor);
+}
+
+/* Matches the Select component's control, without pulling in FormField's
+   label markup — the label here is already drawn by the grid. */
+.asm__select {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.asm__select-control {
+  width: 100%;
+  height: var(--input-height);
+  padding: 0 calc(var(--input-padding-h) * 2 + 20px) 0 var(--input-padding-h);
+  appearance: none;
+  background: var(--input-bg);
+  border: var(--input-border-width) solid var(--input-border-color);
+  border-radius: var(--input-radius);
+  font-family: var(--fontfamily-base);
+  font-size: var(--input-fontsize);
+  color: var(--heading-basecolor);
+  outline: none;
+  cursor: pointer;
+}
+
+.asm__select-control:focus-visible {
+  border-color: var(--focus-outline-color);
+  box-shadow: 0 0 0 1px var(--focus-outline-color);
+}
+
+.asm__select-chevron {
+  position: absolute;
+  right: var(--input-padding-h);
+  color: var(--text-mutedcolor);
+  pointer-events: none;
+}
+
+/* Status checkboxes span the grid: they are a row of related states, and
+   breaking them across columns would read as unrelated fields. */
+.asm__checks {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.asm__checks-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+
+.asm__check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textbase);
+  color: var(--heading-basecolor);
+  cursor: pointer;
+}
+
+/* The real input stays in the accessibility tree and takes focus; the drawn
+   box is what people see. */
+.asm__check-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.asm__check-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 1px solid var(--input-border-color);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: transparent;
+}
+
+.asm__check-input:checked + .asm__check-box {
+  background: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
+  color: #ffffff;
+}
+
+.asm__check-input:focus-visible + .asm__check-box {
+  outline: 2px solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+/* Bulk search: a distinct surface, because it replaces the fields beside it
+   rather than adding to them. */
+.asm__bulk {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border-radius: var(--radius-card-sm);
+  background: #f4f6f8;
+}
+
+.asm__bulk-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0;
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: var(--fontsize-textbase);
+  color: var(--heading-basecolor);
+}
+
+.asm__bulk-note {
+  margin: 0 0 var(--space-xs);
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  line-height: 1.5;
+  color: var(--text-mutedcolor);
+}
+
+.asm__textarea {
+  width: 100%;
+  padding: var(--space-sm) var(--input-padding-h);
+  background: var(--input-bg);
+  border: var(--input-border-width) solid var(--input-border-color);
+  border-radius: var(--input-radius);
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  color: var(--heading-basecolor);
+  resize: vertical;
+  outline: none;
+}
+
+.asm__textarea:focus-visible {
+  border-color: var(--focus-outline-color);
+  box-shadow: 0 0 0 1px var(--focus-outline-color);
+}
+
+.asm__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--nav-border-color);
+}
+
+.asm__actions-right {
+  display: flex;
+  gap: var(--gap-buttons, 12px);
+}
+
+/* Reset is a link, not a button: it is destructive to typed input and should
+   not sit at the same weight as Search. */
+.asm__reset {
+  border: 0;
+  padding: var(--space-xs) 0;
+  background: none;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  font-weight: var(--fontweight-body-strong);
+  color: var(--text-link-color);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.asm__reset:focus-visible {
+  outline: 2px solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+/* Two columns of fields once three no longer fit, then one. The bulk panel
+   drops below the fields before the fields themselves get narrow. */
+@media (max-width: 1000px) {
+  .asm__cols {
+    flex-direction: column;
+  }
+
+  .asm__bulk {
+    width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  .asm__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .asm__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .asm__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,140 @@
+/* Sits in the main column, above the Workspace panels, and reads as part of
+   the same stack: same container surface, radius, and elevation as a panel. */
+.gsearch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  width: 100%;
+  padding: var(--space-xl);
+  background: var(--background-containercolor);
+  border-radius: var(--radius-card-lg);
+  box-shadow: var(--shadow-elevation1);
+}
+
+.gsearch__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* Matches a panel title, so search does not outrank the work below it. */
+.gsearch__title {
+  margin: 0;
+  font-family: var(--fontfamily-heading);
+  font-weight: var(--fontweight-heading-strong);
+  font-size: 24px;
+  line-height: 1.25;
+  color: var(--heading-basecolor);
+}
+
+.gsearch__note {
+  margin: 0;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textsm);
+  line-height: 1.5;
+  color: var(--text-mutedcolor);
+}
+
+.gsearch__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* The input carries the icon inside it rather than beside it, so the whole
+   box reads as one control. Min-width keeps it from collapsing to nothing
+   when the actions wrap. */
+.gsearch__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 320px;
+  min-width: 240px;
+}
+
+.gsearch__icon {
+  position: absolute;
+  left: var(--input-padding-h);
+  color: var(--text-mutedcolor);
+  pointer-events: none;
+}
+
+.gsearch__input {
+  width: 100%;
+  height: var(--input-height);
+  /* Left padding clears the magnifier: icon offset + 20px glyph + a gap. */
+  padding: 0 var(--input-padding-h) 0 calc(var(--input-padding-h) * 2 + 20px);
+  background: var(--input-bg);
+  border: var(--input-border-width) solid var(--input-border-color);
+  border-radius: var(--input-radius);
+  font-family: var(--fontfamily-base);
+  font-size: var(--input-fontsize);
+  font-weight: var(--input-fontweight);
+  color: var(--heading-basecolor);
+  outline: none;
+}
+
+.gsearch__input::placeholder {
+  color: var(--input-placeholder-color);
+}
+
+.gsearch__input:focus-visible {
+  border-color: var(--focus-outline-color);
+  box-shadow: 0 0 0 1px var(--focus-outline-color);
+}
+
+/* Clear the browser's own search cancel affordance, which sits on top of the
+   right padding and does not match anything else in the UI. */
+.gsearch__input::-webkit-search-decoration,
+.gsearch__input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.gsearch__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-buttons, 12px);
+  flex-shrink: 0;
+}
+
+/* A tertiary-weight control: it opens more of the same tool rather than doing
+   the work, so it sits quieter than the Search button beside it. */
+.gsearch__advanced {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  height: var(--input-height);
+  padding: 0 var(--space-lg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-navitem, 8px);
+  background: transparent;
+  font-family: var(--fontfamily-base);
+  font-size: var(--fontsize-textbase);
+  font-weight: var(--fontweight-body-strong);
+  color: var(--text-link-color);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.gsearch__advanced:hover {
+  background: #f4f6f8;
+}
+
+.gsearch__advanced:focus-visible {
+  outline: 2px solid var(--focus-outline-color);
+  outline-offset: 2px;
+}
+
+/* Narrow: the actions take their own line under a full-width input rather
+   than squeezing the box down to a few characters. */
+@media (max-width: 720px) {
+  .gsearch__field {
+    flex: 1 1 100%;
+  }
+
+  .gsearch__actions {
+    width: 100%;
+  }
+}

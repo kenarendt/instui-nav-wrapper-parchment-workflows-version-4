@@ -104,11 +104,6 @@ export default function ServiceDashboard({ serviceId }) {
       experienceType="admin"
       serviceId={serviceId}
       title={`${service.name} Dashboard`}
-      actions={
-        <>
-          <Button variant="secondary">Customize Dashboard</Button>
-        </>
-      }
       trailing={trailing}
     >
       <Panel title="Workspace" showMenu>

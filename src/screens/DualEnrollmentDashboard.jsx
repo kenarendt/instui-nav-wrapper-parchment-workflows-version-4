@@ -66,11 +66,6 @@ export default function DualEnrollmentDashboard() {
       experienceType="admin"
       serviceId="dualEnrollment"
       title="Dual Enrollment Dashboard"
-      actions={
-        <>
-          <Button variant="secondary">Customize Dashboard</Button>
-        </>
-      }
       trailing={trailing}
     >
       {/* Workspace */}

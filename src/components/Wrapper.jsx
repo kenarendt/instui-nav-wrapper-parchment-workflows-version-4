@@ -3,6 +3,7 @@ import GlobalNav from "./GlobalNav.jsx";
 import IconButton from "./IconButton.jsx";
 import ServiceSwitcher from "./ServiceSwitcher.jsx";
 import SchoolBand from "./blocks/SchoolBand.jsx";
+import GlobalSearch from "./blocks/GlobalSearch.jsx";
 import OnboardingTour from "./OnboardingTour.jsx";
 import SchoolCrest from "./SchoolCrest.jsx";
 import { useBrowser } from "../browser/BrowserContext.jsx";
@@ -23,10 +24,14 @@ import "./Wrapper.css";
  *
  * Every page carries the same two controls at the top right, in this order:
  * the services switcher, then expand/collapse. They come after whatever the
- * page passes as `actions`, so a page-specific control like Customize
- * Dashboard sits to their left. Keeping the order fixed means the way out of a
- * service is in the same place on every screen, which is what makes a flat
- * architecture navigable.
+ * page passes as `actions`, so a page-specific control sits to their left.
+ * Keeping the order fixed means the way out of a service is in the same place
+ * on every screen, which is what makes a flat architecture navigable.
+ *
+ * Admin service dashboards pass no `actions` at all. The layout of a service
+ * dashboard is a product decision rather than a per-admin one, so there is
+ * nothing to customise; the learner's own dashboard keeps that control,
+ * because the credentials on it are theirs to arrange.
  *
  * Expanded fills the content container; collapsed caps it at a fixed max width.
  * The trailing rail stays a fixed width in both states — the main column is the
@@ -44,6 +49,13 @@ import "./Wrapper.css";
  *     and because they can add a school, which an admin cannot.
  * Either way it resolves to one object, so the band and the nav mark have a
  * single thing to read and cannot diverge between the two experiences.
+ *
+ * A service that declares a `search` config also gets the global search box
+ * at the top of its main column, above the first panel, for the same reason the
+ * band renders here: every service needs it, in the same place, and rendering
+ * it once means a new service gets it without touching its dashboard. It goes
+ * inside the main column rather than above the whole body, because it searches
+ * the work, and the trailing rail is not part of that.
  *
  * An admin service page states the school at the top of the work itself, in the
  * school band above the first panel, rather than as a line under the page
@@ -258,7 +270,10 @@ export default function Wrapper({
           )}
 
           <div className={`wrap__body${trailing ? " wrap__body--split" : ""}`}>
-            <div className="wrap__main">{children}</div>
+            <div className="wrap__main">
+              {service?.search && <GlobalSearch service={service} />}
+              {children}
+            </div>
             {trailing && (
               <aside className="wrap__trailing" aria-label="Additional content">
                 {trailing}
